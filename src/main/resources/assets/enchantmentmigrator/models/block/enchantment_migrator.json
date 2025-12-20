@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "top": "enchantmentmigrator:block/enchantment_migrator_top",
+    "side": "enchantmentmigrator:block/enchantment_migrator_side",
+    "bottom": "enchantmentmigrator:block/enchantment_migrator_bottom"
+  },
+  "particle": "enchantmentmigrator:block/enchantment_migrator_side",
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to":   [16, 12, 16],
+      "faces": {
+        "down":  { "texture": "#bottom" },
+        "up":    { "texture": "#top" },
+        "north": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west":  { "texture": "#side" },
+        "east":  { "texture": "#side" }
+      }
+    }
+  ]
+}

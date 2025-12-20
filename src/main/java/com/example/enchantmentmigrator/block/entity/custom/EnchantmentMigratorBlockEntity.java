@@ -1,0 +1,316 @@
+package com.example.enchantmentmigrator.block.entity.custom;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.example.enchantmentmigrator.block.entity.ImplementedInventory;
+import com.example.enchantmentmigrator.block.entity.ModBlockEntities;
+import com.example.enchantmentmigrator.item.RazuliDustItem;
+import com.example.enchantmentmigrator.screen.custom.EnchantmentMigratorScreenHandler;
+import com.example.enchantmentmigrator.sound.ModSounds;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventories;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
+
+public class EnchantmentMigratorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<BlockPos> {
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
+    private static final int INPUT_SLOT = 0;
+    private static final int BOOK_INPUT_SLOT = 1;
+    private static final int RAZULI_INPUT_SLOT = 2;
+    private static final int OUTPUT_SLOT = 3;
+    ItemStack outputStack = ItemStack.EMPTY;
+    protected final PropertyDelegate propertyDelegate;
+    private int xpCost;
+    private int soundCooldown = 0;
+    private float rotation = 0f;
+
+    /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
+    static {
+        ENCHANTMENT_MIGRATOR_BE = BlockEntityType.Builder.create(EnchantmentMigratorBlockEntity::new, ModBlocks.ENCHANTMENT_MIGRATOR_BLOCK).build(null);
+    }
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(EnchantmentMigratorMod.MOD_ID, "enchantment_migrator_be"),
+                    BlockEntityType.Builder.create(EnchantmentMigratorBlockEntity::new, ModBlocks.ENCHANTMENT_MIGRATOR_BLOCK).build(null);*/
+
+    public EnchantmentMigratorBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.ENCHANTMENT_MIGRATOR_BE, pos, state);
+
+        this.propertyDelegate = new PropertyDelegate() {
+            @Override
+            public int get(int index) {
+                return switch (index) {
+                    case 0 -> xpCost;
+                    default -> 0;
+                };
+            }
+
+            @Override
+            public int size() {
+                return 1;
+            }
+
+            @Override
+            public void set(int index, int value) {
+                if (index == 0) xpCost = value;
+            }
+        };
+    }
+
+    public PropertyDelegate getPropertyDelegate() {
+        return propertyDelegate;
+    }
+
+    @Override
+    public DefaultedList<ItemStack> getItems() {
+        return inventory;
+    }
+
+    public static int getOUTPUT_SLOT() {
+        return OUTPUT_SLOT;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
+    }
+
+     @Override
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        Inventories.writeNbt(nbt, inventory, registryLookup);
+    }
+
+    @Override
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
+        Inventories.readNbt(nbt, inventory, registryLookup);
+    }
+
+    private void decrementStack(int slot) {
+      ItemStack itemStack = inventory.get(slot);
+      if (!itemStack.isEmpty()) {
+         itemStack.decrement(1);
+         this.setStack(slot, itemStack);
+      }
+   }
+
+    public boolean canTakeOutput(PlayerEntity player) {
+        ItemStack inputStack = inventory.get(INPUT_SLOT);
+        ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
+        ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
+        //ItemStack outputStack = inventory.get(OUTPUT_SLOT);
+
+        if (inputStack.isEmpty() || bookStack.isEmpty() || razuliStack.isEmpty() || outputStack.isEmpty()) {
+            return false;
+        }
+        
+        if (!player.isCreative() && player.experienceLevel < xpCost) {
+            return false;
+        }
+
+        // Give the player the output
+        if (!player.getInventory().insertStack(outputStack.copy())) {
+            return false; // can't give item
+        }
+
+        // Trigger crafting/achievement events
+        outputStack.onCraftByPlayer(player.getWorld(), player, outputStack.getCount());
+
+        // Consume inputs
+        //inputStack.decrement(1);  // or remove enchant only
+        //bookStack.decrement(1);
+        //razuliStack.decrement(1);
+        decrementStack(BOOK_INPUT_SLOT);
+        decrementStack(RAZULI_INPUT_SLOT);
+
+        markDirty(); // mark block entity as changed
+
+        // Play sound/particles at block
+        if (world != null && pos != null) {
+            //world.syncWorldEvent(1044, pos, 0); // 1044 = anvil use sound
+            world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, 0.9f);
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public Text getDisplayName() {
+        return Text.translatable("block.enchantmentmigrator.enchantment_migrator");
+    }
+
+    @Nullable
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        return new EnchantmentMigratorScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
+    }
+
+    @Override
+    public BlockPos getScreenOpeningData(ServerPlayerEntity player) {
+        return this.pos;
+    }
+
+    public int getXpCost() {
+        return xpCost;
+    }
+
+    //protected boolean canTakeOutput(PlayerEntity player, boolean present) {
+    //    return (player.isInCreativeMode() || player.experienceLevel >= xpCost) && xpCost > 0;
+    //}
+
+    //public int calculateXPcost(int level, int weight) {
+    //    return (int) (level * 11 - Math.round(weight * 0.6));
+    //}
+
+    public void tick(/*World world, BlockPos pos, BlockState state*/) {
+        if (this.soundCooldown > 0) {
+        this.soundCooldown--;
+        }
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        ItemStack oldStack = inventory.get(slot);
+        inventory.set(slot, stack);
+
+        // Only play sound if this is the slot we care about and item changed
+        if (slot == 0 && !ItemStack.areEqual(oldStack, stack)) {
+            playSound(world, pos);
+        }
+
+        markDirty();
+    }
+
+    public void playSound(World world, BlockPos pos) {
+        double soundDuration = 0;
+        ItemStack inputStack = inventory.get(INPUT_SLOT);
+        SoundEvent sound = null;
+
+        if (soundCooldown == 0 && this.world != null && this.pos != null && inputStack.isEmpty() == false) {
+            switch (inputStack.getItem().toString()) {
+                case "minecraft:iron_boots":
+                    sound = ModSounds.BLUETEETH;
+                    soundDuration = 5;
+                    break;
+                case "minecraft:iron_hoe":
+                    sound = ModSounds.MOOW;
+                    soundDuration = 28;
+                    break;
+                case "minecraft:diamond_shovel":
+                    sound = ModSounds.MILK_THISTLE;
+                    soundDuration = 14;
+                    break;
+                case "minecraft:iron_sword":
+                    sound = ModSounds.CHICKEN;
+                    soundDuration = 38;
+                    break;
+                case "minecraft:iron_leggings":
+                    sound = ModSounds.MENOPAUSE_SYMPTOMS;
+                    soundDuration = 13;
+                default:
+                    sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
+                    soundDuration = 0.2;
+                    break;
+            }
+        }
+        if (sound != null) {
+             world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
+             this.soundCooldown = (int)(soundDuration*20); // convert to ticks
+        }
+
+    }
+
+    public void updateOutput() {
+        ItemStack inputStack = inventory.get(INPUT_SLOT);
+        ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
+        ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
+
+        if (!inputStack.isEmpty() && inputStack.hasEnchantments() && !bookStack.isOf(Items.BOOK) && !razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
+
+            /*if (inputStack.isOf(Items.IRON_BOOTS)) {
+                world.playSound(null, pos, ModSounds.blueteeth, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            } else if (inputStack.isOf(Items.IRON_HOE)) {
+                world.playSound(null, pos, ModSounds.moow, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            }*/
+
+            /*world.getServer().getScheduler().schedule(() -> soundPlaying = false, 1, TimeUnit.SECONDS);
+            }*/
+
+            ItemEnchantmentsComponent enchants = EnchantmentHelper.getEnchantments(inputStack); // outputs all enchants
+            Object2IntMap.Entry<RegistryEntry<Enchantment>> firstEnchant = enchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
+
+            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(null);
+            builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
+
+            this.outputStack = new ItemStack(Items.ENCHANTED_BOOK);
+            outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, builder.build());
+            //EnchantmentHelper.apply(outputBook, (Consumer<Builder>) builder.build());
+            //EnchantmentHelper.set(outputBook, firstEnchant);
+
+            ItemEnchantmentsComponent.Builder itemBuilder = new ItemEnchantmentsComponent.Builder(EnchantmentHelper.getEnchantments(inputStack));
+            itemBuilder.remove(e -> e.equals(firstEnchant.getKey()));
+
+            //int xpCost = calculateXPcost(firstEnchant.getIntValue(), firstEnchant.getKey().value().getWeight());
+            float cmult = 1;
+            if (firstEnchant.getKey().isIn(EnchantmentTags.CURSE)){ cmult = 3;}
+            this.xpCost = (int)(Math.round((cmult * (firstEnchant.getIntValue() * 0.5) * (11 - (firstEnchant.getKey().value().getWeight() * 0.6)))));
+
+            //markDirty();
+            
+            
+            
+        } else { 
+            this.outputStack = ItemStack.EMPTY;
+            this.xpCost = 0;
+            //markDirty();
+        }
+    }
+
+    public float getRotation() {
+        rotation += 0.25f;
+        if (rotation > 360) {
+            rotation = 0f;
+        }
+        return rotation;
+    }
+
+    public double getMovement() {
+        double movement = Math.sin(Math.toRadians(rotation * 4)) * 0.05;
+        return movement;
+    }
+
+}

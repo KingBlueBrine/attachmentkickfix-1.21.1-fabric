@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "enchantmentmigrator",
+	"version": "1.9.2",
+	"name": "Enchantment Migrator",
+	"description": "A mod that moves the top enchantment of an item onto a book",
+	"authors": [
+		"kibiborbine"
+	],
+	"icon": "assets/enchantmentmigrator/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.example.enchantmentmigrator.EnchantmentMigratorMod"
+		],
+		"client": [
+			"com.example.enchantmentmigrator.EnchantmentMigratorClient"
+		],
+		"fabric-datagen": [
+    		"com.example.enchantmentmigrator.EnchantmentMigratorDataGenerator"
+  		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.6",
+		"minecraft": "~1.21.1",
+		"fabric-api": "*"
+	},
+	"suggests": {
+	}
+}

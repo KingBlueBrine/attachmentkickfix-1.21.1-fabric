@@ -1,0 +1,31 @@
+{
+    "blueteeth": {
+        "sounds": [
+            "enchantmentmigrator:blueteeth"
+        ]
+    },
+
+    "moow": {
+        "sounds": [
+            "enchantmentmigrator:moow"
+        ]
+    },
+
+    "chicken": {
+        "sounds": [
+            "enchantmentmigrator:chicken"
+        ]
+    },
+
+    "menopause_symptoms": {
+        "sounds": [
+            "enchantmentmigrator:menopause_symptoms"
+        ]
+    },
+
+    "milk_thistle": {
+        "sounds": [
+            "enchantmentmigrator:milk_thistle"
+        ]
+    }
+}
