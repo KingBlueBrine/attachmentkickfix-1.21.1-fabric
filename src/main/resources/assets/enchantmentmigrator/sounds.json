@@ -33,5 +33,29 @@
         "sounds": [
             "enchantmentmigrator:zero_calories"
         ]
+    },
+
+    "weight_loss": {
+        "sounds": [
+            "enchantmentmigrator:weight_loss"
+        ]
+    },
+
+    "my_guinea_pig": {
+        "sounds": [
+            "enchantmentmigrator:my_guinea_pig"
+        ]
+    },
+    
+    "guinea_pig_dying": {
+        "sounds": [
+            "enchantmentmigrator:guinea_pig_dying"
+        ]
+    },
+
+    "uni": {
+        "sounds": [
+            "enchantmentmigrator:uni"
+        ]
     }
 }

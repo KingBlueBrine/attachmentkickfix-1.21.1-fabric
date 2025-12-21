@@ -267,6 +267,18 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 case "minecraft:carved_pumpkin":
                     sound = ModSounds.ZERO_CALORIES;
                     soundDuration = 16;
+                case "minecraft:shears":
+                    sound = ModSounds.GUINEA_PIG_DYING;
+                    soundDuration = 14;
+                case "minecraft:stone_sword":
+                    sound = ModSounds.MY_GUINEA_PIG;
+                    soundDuration = 11;
+                case "minecraft:fishing_rod":
+                    sound = ModSounds.WEIGHT_LOSS;
+                    soundDuration = 3;
+                case "minecraft:diamond_hoe":
+                    sound = ModSounds.UNI;
+                    soundDuration = 13;
                 default:
                     sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
                     soundDuration = 0.2;
