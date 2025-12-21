@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+//import net.minecraft.item.ItemStack;
 //import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
@@ -180,19 +180,20 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
             boolean hasEnoughLevels = handler.hasEnoughLevels(player);
 
             //context.drawText(textRenderer, String.valueOf(xpCost), x, y, xpCost, cursorDragging);
-            int colour = hasEnoughLevels ? 0x404040 : 0xFF5555;
+            int colour = hasEnoughLevels ? 8453920 : 16736352;
             Identifier DISPLAYED_ARROW_TEXURE = hasEnoughLevels ? ARROW_TEXTURE: NOT_ENOUGH_LEVELS;
             
             Object text = Text.translatable("container.enchantment_migrate.cost", new Object[]{xpCost});
             int k = this.backgroundWidth - 8 - this.textRenderer.getWidth((StringVisitable)text) - 2;
 
             context.drawTexture(DISPLAYED_ARROW_TEXURE, 101, 48, 0, 0, 24, 16, 24, 16);
-            context.drawText(textRenderer, (Text)text, k, 69, colour, false);
+            context.drawTextWithShadow(textRenderer, (Text)text, k, 69, colour);
+            context.fill(k-2, 67, this.backgroundWidth-8, 79, 1325400064);
 
-            ItemStack outputStack = handler.getSlot(3).getStack();
+            /*ItemStack outputStack = handler.getOutputStack();
             if (!outputStack.isEmpty()) {
                 context.drawItem(outputStack, 134, 47);
-            }
+            }*/
             
 
         }

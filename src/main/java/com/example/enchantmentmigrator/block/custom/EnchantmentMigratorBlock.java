@@ -16,8 +16,10 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -71,7 +73,13 @@ public class EnchantmentMigratorBlock extends BlockWithEntity implements BlockEn
         if(state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if(blockEntity instanceof EnchantmentMigratorBlockEntity) {
-                ItemScatterer.spawn(world, pos, ((EnchantmentMigratorBlockEntity) blockEntity));
+                for (int slot=0; slot <=2; slot++) {
+                    ItemStack stack = ((EnchantmentMigratorBlockEntity)blockEntity).getStack(slot);
+                    if (!stack.isEmpty()) {
+                        ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                    }
+                }
+                //ItemScatterer.spawn(world, pos, ((EnchantmentMigratorBlockEntity) blockEntity).getDropInventoryContents());
                 world.updateComparators(pos, this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);

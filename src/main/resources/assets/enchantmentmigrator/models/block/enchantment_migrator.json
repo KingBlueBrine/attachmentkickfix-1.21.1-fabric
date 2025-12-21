@@ -5,7 +5,7 @@
     "side": "enchantmentmigrator:block/enchantment_migrator_side",
     "bottom": "enchantmentmigrator:block/enchantment_migrator_bottom"
   },
-  "particle": "enchantmentmigrator:block/enchantment_migrator_side",
+  "particle": "minecraft:block/obsidian",
   "elements": [
     {
       "from": [0, 0, 0],

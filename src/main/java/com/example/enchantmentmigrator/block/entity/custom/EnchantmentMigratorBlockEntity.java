@@ -40,6 +40,7 @@ import net.minecraft.world.World;
 
 public class EnchantmentMigratorBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<BlockPos> {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
+    //private DefaultedList<ItemStack> dropInventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
     private static final int INPUT_SLOT = 0;
     private static final int BOOK_INPUT_SLOT = 1;
     private static final int RAZULI_INPUT_SLOT = 2;
@@ -174,7 +175,16 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         //inputStack.decrement(1);  // or remove enchant only
         //bookStack.decrement(1);
         //razuliStack.decrement(1);
+
     }
+
+    /*public DefaultedList<ItemStack> getDropInventoryContents() {
+        DefaultedList<ItemStack> dropInventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
+        dropInventory.add(0, inventory.get(INPUT_SLOT));
+        dropInventory.add(1, inventory.get(BOOK_INPUT_SLOT));
+        dropInventory.add(2, inventory.get(RAZULI_INPUT_SLOT));
+        return dropInventory;
+    }*/
 
 
     @Override
