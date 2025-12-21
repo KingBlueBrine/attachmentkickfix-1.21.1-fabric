@@ -52,6 +52,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private int xpCost;
     private int soundCooldown = 0;
     private float rotation = (float)(Math.random()*360);
+    private static int zRotation1 = (int)(Math.round(Math.random()*360));
+    private static int zRtoation2 = (int)(Math.round(Math.random()*360));
 
     /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
     static {
@@ -375,6 +377,14 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     public double getMovement() {
         double movement = Math.sin(Math.toRadians(rotation * 4)) * 0.05;
         return movement;
+    }
+
+    //public record zRotations = (int zRotation1, int zRotation2) {}
+    public static int getZRotation1() {
+        return zRotation1;
+    }
+    public static int getZRotation2() {
+        return zRtoation2;
     }
 
 }
