@@ -12,7 +12,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 //import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
@@ -46,6 +48,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     private int rand = (int) (Math.floor(Math.random() * 9));
     private int tick = ghostDuration * rand;
     private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];
+    private final PlayerEntity player;
 
     /*static { for (int i = 0; i < 9; i++) { GHOST_TEXTURES[i] = Identifier.of(EnchantmentMigratorMod.MOD_ID,"textures/gui/cycling/" + i + ".png"); }}
     private static List<Identifier> GHOST_ICONS = new ArrayList<>();
@@ -68,6 +71,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         super(handler, inventory, title);
        // enchantableSlotIcon.setTextures(GHOST_ICONS);
         this.titleX = 60;
+        this.player = inventory.player;
     }
 
     //private int ghostTick = 0;      // increments every client tick
@@ -174,9 +178,17 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
             context.drawTexture(ARROW_TEXTURE, x+101, y+48, 0, 0, 24, 16, 24, 16);
             //context.drawText(textRenderer, String.valueOf(xpCost), x, y, xpCost, cursorDragging);
 
+            int colour = handler.hasEnoughLevels(player) ? 8453920 : 16736352;
             Object text = Text.translatable("container.enchantment_migrate.cost", new Object[]{xpCost});
             int k = this.backgroundWidth - 8 - this.textRenderer.getWidth((StringVisitable)text) - 2;
-            context.drawText(textRenderer, (Text)text, k, 69, 8453920, false);
+            context.drawText(textRenderer, (Text)text, k, 69, colour, false);
+
+            ItemStack outputStack = handler.getSlot(3).getStack();
+            if (!outputStack.isEmpty()) {
+                context.drawItem(outputStack, 134, 47);
+            }
+            
+
         }
 
         /*

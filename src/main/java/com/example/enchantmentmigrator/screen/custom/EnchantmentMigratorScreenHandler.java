@@ -5,6 +5,8 @@ import com.example.enchantmentmigrator.item.RazuliDustItem;
 import com.example.enchantmentmigrator.screen.ModScreenHandlers;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -20,6 +22,8 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final EnchantmentMigratorBlockEntity blockEntity;
+    private ItemEnchantmentsComponent inputEnchants;
+
 
     public EnchantmentMigratorScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos), new ArrayPropertyDelegate(4));
@@ -37,11 +41,21 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public boolean canInsert(ItemStack item) {
                 return (item.hasEnchantments());
             }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+            }
         });
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) {
                 return item.isOf(Items.BOOK);
+            }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
             }
         });
         this.addSlot(new Slot(inventory, 2, 76, 22){
@@ -49,10 +63,40 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public boolean canInsert(ItemStack item) {
                 return item.isOf(RazuliDustItem.RAZULI_DUST);
             }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+            }
         });
         this.addSlot(new Slot(inventory, 3, 134, 47){
             @Override
             public boolean canInsert(ItemStack item) {
+                return false;
+            }
+            @Override
+            public void onTakeItem(PlayerEntity player, ItemStack item) {
+                /*inventory.removeStack(0);
+                inventory.removeStack(1, 1);
+                inventory.removeStack(2, 1);*/
+                //((EnchantmentMigratorBlockEntity) blockEntity).canTakeOutput(player);
+                ((EnchantmentMigratorBlockEntity) blockEntity).onTakeOutput(player);
+                updateOutput();
+            }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+            }
+            @Override
+            public boolean canTakeItems(PlayerEntity player) {
+                if (inventory.getStack(3).isOf(Items.ENCHANTED_BOOK)) {
+                    if (hasEnoughLevels(player)) {
+                        if (((EnchantmentMigratorBlockEntity) blockEntity).canTakeOutput(player)) {
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
         });
@@ -62,6 +106,43 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
 
         addProperties(arrayPropertyDelegate);
     }
+
+    public boolean hasEnoughLevels(PlayerEntity player) {
+        int xpCost = propertyDelegate.get(0);
+        return player.experienceLevel >= xpCost || player.isCreative();
+    }
+
+    private void updateOutput() {
+        ItemStack inputStack = inventory.getStack(0);
+        ItemStack bookStack = inventory.getStack(1);
+        ItemStack razuliStack = inventory.getStack(2);
+
+        if (inputStack.isEmpty() || bookStack.isEmpty() || razuliStack.isEmpty()) {
+            inventory.setStack(4, ItemStack.EMPTY);
+            return;
+        }
+        if (inputStack.hasEnchantments() && bookStack.isOf(Items.BOOK) && razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
+
+            ItemStack outputStack = new ItemStack(Items.ENCHANTED_BOOK);
+
+            this.inputEnchants = EnchantmentHelper.getEnchantments(inputStack); // outputs all enchants
+            var firstEnchant = this.inputEnchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
+
+            /*Object2IntMap.Entry<RegistryEntry<Enchantment>> firstEnchant = enchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
+            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
+            //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());*/
+
+            ItemEnchantmentsComponent.Builder outputBuilder = new ItemEnchantmentsComponent.Builder(this.inputEnchants);//.add(firstEnchantKey, firstEnchantLevel).build();
+            outputBuilder.remove(e -> true);
+            outputBuilder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
+
+            //outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, inputBuilder.build());
+            EnchantmentHelper.set(outputStack, outputBuilder.build());
+
+            inventory.setStack(3, outputStack);
+        } else {inventory.setStack(3, ItemStack.EMPTY);}
+    }
+
 
     public int getXpCost() {
         return propertyDelegate.get(0);
@@ -145,13 +226,13 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         }
     }
 
-    //@Override
+    /*@Override
     public ItemStack onTakeOutput(PlayerEntity player, ItemStack stack) {
         if (blockEntity.canTakeOutput(player)) {
             return stack;
         }
         return ItemStack.EMPTY;
-    }
+    }*/
 
 
 }

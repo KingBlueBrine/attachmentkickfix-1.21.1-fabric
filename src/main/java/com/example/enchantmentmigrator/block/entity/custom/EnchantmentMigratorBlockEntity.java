@@ -8,11 +8,9 @@ import com.example.enchantmentmigrator.item.RazuliDustItem;
 import com.example.enchantmentmigrator.screen.custom.EnchantmentMigratorScreenHandler;
 import com.example.enchantmentmigrator.sound.ModSounds;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -47,6 +45,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private static final int RAZULI_INPUT_SLOT = 2;
     private static final int OUTPUT_SLOT = 3;
     ItemStack outputStack = ItemStack.EMPTY;
+    ItemEnchantmentsComponent inputEnchants;
+    ItemEnchantmentsComponent inputMinusTopEnchants;
     protected final PropertyDelegate propertyDelegate;
     private int xpCost;
     private int soundCooldown = 0;
@@ -127,32 +127,12 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
       }
    }
 
-    public boolean canTakeOutput(PlayerEntity player) {
-        ItemStack inputStack = inventory.get(INPUT_SLOT);
-        ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
-        ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
-        //ItemStack outputStack = inventory.get(OUTPUT_SLOT);
+   public void onTakeOutput(PlayerEntity player) {
+       if (canTakeOutput(player)) {
 
-        if (inputStack.isEmpty() || bookStack.isEmpty() || razuliStack.isEmpty() || outputStack.isEmpty()) {
-            return false;
-        }
-        
-        if (!player.isCreative() && player.experienceLevel < xpCost) {
-            return false;
-        }
-
-        // Give the player the output
-        if (!player.getInventory().insertStack(outputStack.copy())) {
-            return false; // can't give item
-        }
-
-        // Trigger crafting/achievement events
         outputStack.onCraftByPlayer(player.getWorld(), player, outputStack.getCount());
 
-        // Consume inputs
-        //inputStack.decrement(1);  // or remove enchant only
-        //bookStack.decrement(1);
-        //razuliStack.decrement(1);
+        EnchantmentHelper.set(inventory.get(INPUT_SLOT), inputMinusTopEnchants);
         decrementStack(BOOK_INPUT_SLOT);
         decrementStack(RAZULI_INPUT_SLOT);
 
@@ -164,7 +144,36 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, 0.9f);
         }
 
+       }
+   }
+
+    public boolean canTakeOutput(PlayerEntity player) {
+        ItemStack inputStack = inventory.get(INPUT_SLOT);
+        ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
+        ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
+        //ItemStack outputStack = inventory.get(OUTPUT_SLOT);
+
+        if (inputStack.isEmpty() || !inputStack.hasEnchantments() || bookStack.isEmpty() || razuliStack.isEmpty() || outputStack.isEmpty()) {
+            return false;
+        }
+        
+        if (!player.isCreative() && player.experienceLevel < xpCost) {
+            return false;
+        }
+
         return true;
+
+        /* Give the player the output
+        if (!player.getInventory().insertStack(outputStack.copy())) {
+            return false; // can't give item
+        }*/
+
+        // Trigger crafting/achievement events
+        
+        // Consume inputs
+        //inputStack.decrement(1);  // or remove enchant only
+        //bookStack.decrement(1);
+        //razuliStack.decrement(1);
     }
 
 
@@ -199,6 +208,10 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     public void tick(/*World world, BlockPos pos, BlockState state*/) {
         if (this.soundCooldown > 0) {
         this.soundCooldown--;
+        }
+        rotation += 0.25f;
+        if (rotation > 360) {
+            rotation = 0f;
         }
     }
 
@@ -254,12 +267,13 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
     }
 
-    public void updateOutput() {
+    public void updateResult() {
         ItemStack inputStack = inventory.get(INPUT_SLOT);
         ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
         ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
+        //ItemStack outputStack = inventory.get(OUTPUT_SLOT);
 
-        if (!inputStack.isEmpty() && inputStack.hasEnchantments() && !bookStack.isOf(Items.BOOK) && !razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
+        if (!inputStack.isEmpty() && inputStack.hasEnchantments() && bookStack.isOf(Items.BOOK) && razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
 
             /*if (inputStack.isOf(Items.IRON_BOOTS)) {
                 world.playSound(null, pos, ModSounds.blueteeth, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -269,29 +283,42 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
             /*world.getServer().getScheduler().schedule(() -> soundPlaying = false, 1, TimeUnit.SECONDS);
             }*/
+           //Object2IntMap.Entry<RegistryEntry<Enchantment>>
 
-            ItemEnchantmentsComponent enchants = EnchantmentHelper.getEnchantments(inputStack); // outputs all enchants
-            Object2IntMap.Entry<RegistryEntry<Enchantment>> firstEnchant = enchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
+            this.inputEnchants = EnchantmentHelper.getEnchantments(inputStack); // outputs all enchants
+            var firstEnchant = this.inputEnchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
 
-            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(null);
-            builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
+            RegistryEntry<Enchantment> firstEnchantKey = firstEnchant.getKey(); //gets enchant name
+            int firstEnchantLevel = firstEnchant.getIntValue(); // gets enchant level
+
+            ItemEnchantmentsComponent.Builder inputBuilder = new ItemEnchantmentsComponent.Builder(this.inputEnchants); //makes builder will all original enchants
+            inputBuilder.remove(e -> e.equals(firstEnchantKey)); // removes first enchant from original list
+            //inputStack.set(DataComponentTypes.ENCHANTMENTS, inputBuilder.build()); VVV //gives input back the original enchants except first one
+            //  EnchantmentHelper.set(inputStack, inputBuilder.build());
+            this.inputMinusTopEnchants = inputBuilder.build();
+
+            ItemEnchantmentsComponent.Builder outputBuilder = new ItemEnchantmentsComponent.Builder(this.inputEnchants);//.add(firstEnchantKey, firstEnchantLevel).build();
+            outputBuilder.remove(e -> true);
+            outputBuilder.add(firstEnchantKey, firstEnchantLevel);
 
             this.outputStack = new ItemStack(Items.ENCHANTED_BOOK);
-            outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, builder.build());
-            //EnchantmentHelper.apply(outputBook, (Consumer<Builder>) builder.build());
-            //EnchantmentHelper.set(outputBook, firstEnchant);
+            EnchantmentHelper.set(outputStack, outputBuilder.build());
 
-            ItemEnchantmentsComponent.Builder itemBuilder = new ItemEnchantmentsComponent.Builder(EnchantmentHelper.getEnchantments(inputStack));
-            itemBuilder.remove(e -> e.equals(firstEnchant.getKey()));
+            //ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
+            //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
+            
+            //outputStack.set(DataComponentTypes.STORED_ENCHANTMENTS, builder.build());
+            //EnchantmentHelper.apply(outputBook, (Consumer<Builder>) builder.build());
+
+            //ItemEnchantmentsComponent.Builder itemBuilder = new ItemEnchantmentsComponent.Builder(EnchantmentHelper.getEnchantments(inputStack));
+            //itemBuilder.remove(e -> e.equals(firstEnchant.getKey()));
 
             //int xpCost = calculateXPcost(firstEnchant.getIntValue(), firstEnchant.getKey().value().getWeight());
             float cmult = 1;
             if (firstEnchant.getKey().isIn(EnchantmentTags.CURSE)){ cmult = 3;}
             this.xpCost = (int)(Math.round((cmult * (firstEnchant.getIntValue() * 0.5) * (11 - (firstEnchant.getKey().value().getWeight() * 0.6)))));
 
-            //markDirty();
-            
-            
+            markDirty();
             
         } else { 
             this.outputStack = ItemStack.EMPTY;
@@ -301,10 +328,6 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public float getRotation() {
-        rotation += 0.25f;
-        if (rotation > 360) {
-            rotation = 0f;
-        }
         return rotation;
     }
 
