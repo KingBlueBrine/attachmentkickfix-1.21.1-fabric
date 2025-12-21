@@ -44,6 +44,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
+                updateOutput();
                 ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
             }
         });
@@ -55,6 +56,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
+                updateOutput();
                 ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
             }
         });
@@ -66,6 +68,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
+                updateOutput();
                 ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
             }
         });
@@ -118,7 +121,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         ItemStack razuliStack = inventory.getStack(2);
 
         if (inputStack.isEmpty() || bookStack.isEmpty() || razuliStack.isEmpty()) {
-            inventory.setStack(4, ItemStack.EMPTY);
+            inventory.setStack(3, ItemStack.EMPTY);
             return;
         }
         if (inputStack.hasEnchantments() && bookStack.isOf(Items.BOOK) && razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {

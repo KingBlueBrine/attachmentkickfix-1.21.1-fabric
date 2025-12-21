@@ -29,6 +29,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     private static final String cyclingPath = path + "cyclingmain/";
     private static final Identifier GUI_TEXTURE = Identifier.of(modID, path + "enchantment_migrator_gui.png");
     private static final Identifier ARROW_TEXTURE = Identifier.of(modID, path + "arrow_progress.png");
+    private static final Identifier NOT_ENOUGH_LEVELS = Identifier.of(modID, path + "error.png");
     //private static final Identifier BOOK_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_book.png");
     //private static final Identifier RAZULI_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_razuli_dust.png");
 
@@ -173,14 +174,19 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
       super.drawForeground(context, mouseX, mouseY);
 
+        //int colour = 0xFF5555;
         int xpCost = handler.getXpCost();
         if(xpCost > 0) {
-            context.drawTexture(ARROW_TEXTURE, x+101, y+48, 0, 0, 24, 16, 24, 16);
-            //context.drawText(textRenderer, String.valueOf(xpCost), x, y, xpCost, cursorDragging);
+            boolean hasEnoughLevels = handler.hasEnoughLevels(player);
 
-            int colour = handler.hasEnoughLevels(player) ? 8453920 : 16736352;
+            //context.drawText(textRenderer, String.valueOf(xpCost), x, y, xpCost, cursorDragging);
+            int colour = hasEnoughLevels ? 0x404040 : 0xFF5555;
+            Identifier DISPLAYED_ARROW_TEXURE = hasEnoughLevels ? ARROW_TEXTURE: NOT_ENOUGH_LEVELS;
+            
             Object text = Text.translatable("container.enchantment_migrate.cost", new Object[]{xpCost});
             int k = this.backgroundWidth - 8 - this.textRenderer.getWidth((StringVisitable)text) - 2;
+
+            context.drawTexture(DISPLAYED_ARROW_TEXURE, 101, 48, 0, 0, 24, 16, 24, 16);
             context.drawText(textRenderer, (Text)text, k, 69, colour, false);
 
             ItemStack outputStack = handler.getSlot(3).getStack();
