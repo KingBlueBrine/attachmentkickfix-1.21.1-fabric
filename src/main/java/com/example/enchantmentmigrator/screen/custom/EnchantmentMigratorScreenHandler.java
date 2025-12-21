@@ -79,6 +79,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             }
             @Override
             public void onTakeItem(PlayerEntity player, ItemStack item) {
+                super.onTakeItem(player, item);
                 /*inventory.removeStack(0);
                 inventory.removeStack(1, 1);
                 inventory.removeStack(2, 1);*/
@@ -163,9 +164,9 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             if (invSlot < this.inventory.size()) { 
                 // Shift-clicked from the block inventory
                 if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
-                    slot.onTakeItem(player, originalStack);
                     return ItemStack.EMPTY;
                 }
+                slot.onTakeItem(player, originalStack);
             } else {
                 // Shift-clicked from player inventory
                 boolean moved = false;

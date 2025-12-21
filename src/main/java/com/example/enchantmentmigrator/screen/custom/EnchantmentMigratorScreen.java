@@ -33,7 +33,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     //private static final Identifier BOOK_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_book.png");
     //private static final Identifier RAZULI_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_razuli_dust.png");
 
-    private static final Identifier[] GHOST_TEXTURES = new Identifier[] {
+    /*private static final Identifier[] GHOST_TEXTURES = new Identifier[] {
         Identifier.of(modID, cyclingPath + "0.png"),
         Identifier.of(modID, cyclingPath + "1.png"),
         Identifier.of(modID, cyclingPath + "2.png"),
@@ -43,10 +43,20 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         Identifier.of(modID, cyclingPath + "6.png"),
         Identifier.of(modID, cyclingPath + "7.png"),
         Identifier.of(modID, cyclingPath + "8.png")
-    };
+    };*/
+
+    private static final int GHOST_FRAME_COUNT = 18;
+
+    private static final Identifier[] GHOST_TEXTURES = new Identifier[GHOST_FRAME_COUNT];
+
+    static {
+        for (int i = 0; i < GHOST_FRAME_COUNT; i++) {
+            GHOST_TEXTURES[i] = Identifier.of(modID, cyclingPath + i + ".png");
+        }
+    }
 
     private final int ghostDuration = 40;
-    private int rand = (int) (Math.floor(Math.random() * 9));
+    private int rand = (int) (Math.floor(Math.random() * GHOST_FRAME_COUNT));
     private int tick = ghostDuration * rand;
     private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];
     private final PlayerEntity player;
@@ -100,7 +110,15 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         if (handler.getSlot(0).hasStack()) {return;}
 
         tick++;
-        switch (tick) {
+
+        int index = (tick / ghostDuration) % GHOST_TEXTURES.length;
+        DISPLAY_TEXTURE = GHOST_TEXTURES[index];
+
+        if (tick >= (ghostDuration*GHOST_TEXTURES.length)) {
+            tick = 0; // prevent overflow
+        }
+
+        /*switch (tick) {
             case 0:
                 DISPLAY_TEXTURE = GHOST_TEXTURES[0];
                 break;
@@ -134,7 +152,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
                 break;
             default:
                 break;
-        }
+        }*/
         //EnchantmentMigratorMod.LOGGER.info("Ghost Tick: " + tick + " | Ghost Index: " + DISPLAY_TEXTURE);
     }
 

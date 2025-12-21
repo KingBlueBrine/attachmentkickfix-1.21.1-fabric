@@ -232,18 +232,23 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
         // Only play sound if this is the slot we care about and item changed
         if (slot == 0 && !ItemStack.areEqual(oldStack, stack)) {
-            playBlockSound(world, pos);
+            playBlockSound(world, pos, false);
         }
 
         markDirty();
     }
 
-    public void playBlockSound(World world, BlockPos pos) {
+    public void playBlockSound(World world, BlockPos pos, boolean skip) {
         double soundDuration = 0;
         ItemStack inputStack = inventory.get(INPUT_SLOT);
         SoundEvent sound = null;
 
-        if (soundCooldown == 0 && this.world != null && this.pos != null && inputStack.isEmpty() == false) {
+        if (soundCooldown == 0 && this.world != null && this.pos != null) {
+            if (skip){
+                sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
+                soundDuration = 0.2;
+            } else { 
+                if (!inputStack.isEmpty()) {
             switch (inputStack.getItem().toString()) {
                 case "minecraft:iron_boots":
                     sound = ModSounds.BLUETEETH;
@@ -283,7 +288,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
                     soundDuration = 0.2;
                     break;
-            }
+            }}}
         }
         if (sound != null) {
              world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -301,7 +306,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (!inputStack.isEmpty() && inputStack.hasEnchantments() && bookStack.isOf(Items.BOOK) && razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
 
             if (slot == 1 || slot == 2) {
-                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, SoundCategory.BLOCKS);
+                //world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, SoundCategory.BLOCKS);
+                playBlockSound(world, pos, true);
             }
 
             /*if (inputStack.isOf(Items.IRON_BOOTS)) {

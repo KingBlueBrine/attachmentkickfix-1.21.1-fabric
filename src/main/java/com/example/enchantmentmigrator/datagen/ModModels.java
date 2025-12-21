@@ -1,11 +1,11 @@
 package com.example.enchantmentmigrator.datagen;
 
-import net.minecraft.data.client.TextureKey;
+/*import net.minecraft.data.client.TextureKey;
 import net.minecraft.util.Identifier;
 
 import java.util.Optional;
 
-import net.minecraft.data.client.Model;
+import net.minecraft.data.client.Model;*/
 
 public class ModModels {/*
 
