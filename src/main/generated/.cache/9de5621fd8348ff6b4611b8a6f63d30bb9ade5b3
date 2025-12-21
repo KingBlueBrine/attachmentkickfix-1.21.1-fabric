@@ -1,0 +1,5 @@
+// 1.21.1	2025-12-19T20:16:26.1911674	Enchantment Migrator/Recipes
+391121e733481d85b4102c09d4249f809eb8cac2 data\enchantmentmigrator\recipe\enchantment_migrator.json
+a0406b1092f1a254298fac7650d9526a4e1b2ea4 data\enchantmentmigrator\recipe\razuli_dust.json
+31adde8bd4276ed8e2abbf7139b700f23361def9 data\enchantmentmigrator\advancement\recipes\misc\razuli_dust.json
+93a0e95417146ef2492b30dad89108b0c0d4d6bb data\enchantmentmigrator\advancement\recipes\decorations\enchantment_migrator.json

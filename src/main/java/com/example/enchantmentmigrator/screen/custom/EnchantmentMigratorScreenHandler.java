@@ -45,7 +45,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(0);
             }
         });
         this.addSlot(new Slot(inventory, 1, 76, 47){
@@ -57,7 +57,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(1);
             }
         });
         this.addSlot(new Slot(inventory, 2, 76, 22){
@@ -69,7 +69,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(2);
             }
         });
         this.addSlot(new Slot(inventory, 3, 134, 47){
@@ -89,7 +89,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult();
+                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(3);
             }
             @Override
             public boolean canTakeItems(PlayerEntity player) {
@@ -163,6 +163,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             if (invSlot < this.inventory.size()) { 
                 // Shift-clicked from the block inventory
                 if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
+                    slot.onTakeItem(player, originalStack);
                     return ItemStack.EMPTY;
                 }
             } else {

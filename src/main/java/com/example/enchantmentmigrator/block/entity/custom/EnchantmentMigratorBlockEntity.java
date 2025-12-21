@@ -140,10 +140,10 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         markDirty(); // mark block entity as changed
 
         // Play sound/particles at block
-        if (world != null && pos != null) {
+        //if (world != null && pos != null) {
             //world.syncWorldEvent(1044, pos, 0); // 1044 = anvil use sound
-            world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, 0.9f);
-        }
+        world.playSound(player, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, 0.9f);
+        //}
 
        }
    }
@@ -232,13 +232,13 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
         // Only play sound if this is the slot we care about and item changed
         if (slot == 0 && !ItemStack.areEqual(oldStack, stack)) {
-            playSound(world, pos);
+            playBlockSound(world, pos);
         }
 
         markDirty();
     }
 
-    public void playSound(World world, BlockPos pos) {
+    public void playBlockSound(World world, BlockPos pos) {
         double soundDuration = 0;
         ItemStack inputStack = inventory.get(INPUT_SLOT);
         SoundEvent sound = null;
@@ -264,6 +264,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 case "minecraft:iron_leggings":
                     sound = ModSounds.MENOPAUSE_SYMPTOMS;
                     soundDuration = 13;
+                case "minecraft:carved_pumpkin":
+                    sound = ModSounds.ZERO_CALORIES;
+                    soundDuration = 16;
                 default:
                     sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
                     soundDuration = 0.2;
@@ -277,13 +280,17 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
     }
 
-    public void updateResult() {
+    public void updateResult(int slot) {
         ItemStack inputStack = inventory.get(INPUT_SLOT);
         ItemStack bookStack = inventory.get(BOOK_INPUT_SLOT);
         ItemStack razuliStack = inventory.get(RAZULI_INPUT_SLOT);
         //ItemStack outputStack = inventory.get(OUTPUT_SLOT);
 
         if (!inputStack.isEmpty() && inputStack.hasEnchantments() && bookStack.isOf(Items.BOOK) && razuliStack.isOf(RazuliDustItem.RAZULI_DUST)) {
+
+            if (slot == 1 || slot == 2) {
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, SoundCategory.BLOCKS);
+            }
 
             /*if (inputStack.isOf(Items.IRON_BOOTS)) {
                 world.playSound(null, pos, ModSounds.blueteeth, SoundCategory.BLOCKS, 1.0F, 1.0F);

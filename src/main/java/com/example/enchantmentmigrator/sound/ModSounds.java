@@ -14,6 +14,7 @@ public class ModSounds {
     public static final SoundEvent CHICKEN = registerSoundEvent("chicken");
     public static final SoundEvent MENOPAUSE_SYMPTOMS = registerSoundEvent("menopause_symptoms");
     public static final SoundEvent MILK_THISTLE = registerSoundEvent("milk_thistle");
+    public static final SoundEvent ZERO_CALORIES = registerSoundEvent("zero_calories");
 
     /*public static final BlockSoundGroup ENCHANTMENT_MIGRATOR_SOUNDS = new BlockSoundGroup(1.0F, 1.0F,
         ModSounds.blueteeth,

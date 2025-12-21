@@ -27,5 +27,11 @@
         "sounds": [
             "enchantmentmigrator:milk_thistle"
         ]
+    },
+
+    "zero_calories": {
+        "sounds": [
+            "enchantmentmigrator:zero_calories"
+        ]
     }
 }
