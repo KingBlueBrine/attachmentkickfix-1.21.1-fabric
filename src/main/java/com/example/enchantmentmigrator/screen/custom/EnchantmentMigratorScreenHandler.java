@@ -39,7 +39,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 0, 27, 47) {
             @Override
             public boolean canInsert(ItemStack item) {
-                return (item.hasEnchantments());
+                return (item.hasEnchantments() || item.isOf(Items.CARVED_PUMPKIN));
             }
             @Override
             public void markDirty() {

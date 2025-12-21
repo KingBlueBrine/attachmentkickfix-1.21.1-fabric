@@ -51,7 +51,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     protected final PropertyDelegate propertyDelegate;
     private int xpCost;
     private int soundCooldown = 0;
-    private float rotation = 0f;
+    private float rotation = (float)(Math.random()*360);
 
     /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
     static {
@@ -219,7 +219,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (this.soundCooldown > 0) {
         this.soundCooldown--;
         }
-        rotation += 0.25f;
+        rotation += 0.5f;
         if (rotation > 360) {
             rotation = 0f;
         }

@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 
 public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRenderer<EnchantmentMigratorBlockEntity> {
     private static final float scale = 0.5f;
+    private static final int xRotation = (int)(Math.round(Math.random()*360));
 
     public EnchantmentMigratorBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
 
@@ -30,18 +31,19 @@ public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRender
         ItemRenderer itemRenderer = MinecraftClient.getInstance().getItemRenderer();
 
         ItemStack itemStack = entity.getStack(0);
-        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, 0.5, 1.5, 0.5, itemRenderer, entity, 0F, true); }
+        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, itemRenderer, entity, 0.5, 1.5, 0.5, 0, true); }
         ItemStack bookStack = entity.getStack(1);
-        if (!bookStack.isEmpty()) { renderPlacedItem(bookStack, matrices, vertexConsumers, overlay, 0.35, 0.8, 0.35, itemRenderer, entity, 90F, false); }
+        if (!bookStack.isEmpty()) { renderPlacedItem(bookStack, matrices, vertexConsumers, overlay, itemRenderer, entity,0.35, 0.8, 0.35,  90, false); }
         ItemStack razuliStack = entity.getStack(2);
-        if (!razuliStack.isEmpty()) { renderPlacedItem(razuliStack, matrices, vertexConsumers, overlay, 0.65, 0.8, 0.65, itemRenderer, entity, 90F, false); }
+        if (!razuliStack.isEmpty()) { renderPlacedItem(razuliStack, matrices, vertexConsumers, overlay,itemRenderer, entity, 0.65, 0.8, 0.65,  90, false); }
     }
 
     private void renderPlacedItem(ItemStack stack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, 
-            int overlay, double x, double y, double z, ItemRenderer itemRenderer, EnchantmentMigratorBlockEntity entity, float rotation, boolean spin) {
+            int overlay, ItemRenderer itemRenderer, EnchantmentMigratorBlockEntity entity, double x, double y, double z, int yRotation, boolean spin) {
             matrices.push();
             matrices.translate(x, y, z);   // position on top of block
-            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotation));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(yRotation));
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(xRotation));
             if (spin) {
                 matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getRotation()));
                 matrices.translate(0, entity.getMovement(), 0);
