@@ -53,8 +53,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private int xpCost;
     private int soundCooldown = 0;
     private float rotation = (float)(Math.random()*360);
-    private static int zRotation1 = (int)(Math.round(Math.random()*360));
-    private static int zRtoation2 = (int)(Math.round(Math.random()*360));
+    private static int zRotation1; //= (int)(Math.round(world.random.nextGaussian()*120));
+    private static int zRtoation2; //= (int)(Math.round(world.random.nextGaussian()*120));
     private int ptick;
     private float velocityMult = 0.5f;
 
@@ -67,6 +67,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
     public EnchantmentMigratorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ENCHANTMENT_MIGRATOR_BE, pos, state);
+
+        /*EnchantmentMigratorBlockEntity.*/zRotation1 = (int)(Math.round(world.random.nextGaussian()*120));
+        /*EnchantmentMigratorBlockEntity.*/zRtoation2 = (int)(Math.round(world.random.nextGaussian()*120));
 
         this.propertyDelegate = new PropertyDelegate() {
             @Override
@@ -235,7 +238,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 (Math.random()*3),
                 (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
                 world.random.nextGaussian() * velocityMult,
-                world.random.nextDouble() * (velocityMult*4),
+                (-world.random.nextDouble()) * (velocityMult*4),
                 world.random.nextGaussian() * velocityMult
             );
         } else{
