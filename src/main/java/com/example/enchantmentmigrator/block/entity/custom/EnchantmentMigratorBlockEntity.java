@@ -290,12 +290,12 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         x, y, z
                         );
 
-                    /*Vec3d velocity = 
+                    Vec3d velocity = 
                         target.subtract(start)
                         //.normalize()
-                        .multiply((1 / 30) - world.random.nextFloat() * 0.01f);*/
+                        .multiply(0.15 /*- world.random.nextFloat() * 0.01f*/);
 
-                    Vec3d direction = target.subtract(start);
+                    /*Vec3d direction = target.subtract(start);
 
                     double distance = direction.length();
                     //if (distance < 0.001) return Vec3d.ZERO;
@@ -304,14 +304,14 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                     // Speed scales with distance (vanilla behavior)
                     double speed = 0.02 + (distance * 0.02);
-                    direction.multiply(speed);
+                    direction.multiply(speed);*/
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
                         start.x, start.y, start.z,
                         velocity.x, velocity.y, velocity.z
                     );*/
-                    spawnEnchantParticle(start, direction.x, direction.y, direction.z);
+                    spawnEnchantParticle(start, velocity.x, velocity.y, velocity.z);
                 }
                 //EnchantmentMigratorMod.LOGGER.info("ambua noises");
             } else{
