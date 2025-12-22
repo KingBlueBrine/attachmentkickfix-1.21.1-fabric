@@ -4,7 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.example.enchantmentmigrator.EnchantmentMigratorMod;
 import com.example.enchantmentmigrator.block.entity.ImplementedInventory;
 import com.example.enchantmentmigrator.block.entity.ModBlockEntities;
 import com.example.enchantmentmigrator.item.RazuliDustItem;
@@ -239,7 +238,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             if (ptick <= 0) {
                 ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
 
-                Vec3d target = Vec3d.ofCenter(pos).add(0, 1.5, 0);
+                Vec3d target = Vec3d.ofCenter(pos).add(0, 1, 0);
 
                 if (inventory.get(INPUT_SLOT).hasEnchantments()&&inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK)&&inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST)) {
                     /*world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY()+0.25, pos.getZ(),
@@ -250,11 +249,11 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         world.random.nextDouble() * 5,   //(velocityMult*4),
                         world.random.nextGaussian() * 3f  //velocityMult 
                     );*/
-                    double spread = 0.25;
+                    double spread = 0.05;
 
                     double vx = (world.random.nextDouble() - 0.5) * spread;
                     double vz = (world.random.nextDouble() - 0.5) * spread;
-                    double vy = 0.05 + world.random.nextDouble() * 0.1;
+                    double vy = 0.05 + world.random.nextDouble() * 0.01;
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
@@ -264,14 +263,22 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     spawnEnchantParticle(target, vx, vy, vz);
                 } else {
 
+                    float px = world.random.nextFloat() +1.5f;
+                    px = world.random.nextBoolean() ? px : px*(-1);
+                    float py = world.random.nextFloat() * 0.5f;
+                    py = world.random.nextBoolean() ? py+0.5f : (px*(-1))+0.5f;
+                    float pz = world.random.nextFloat() +1.5f;
+                    pz = world.random.nextBoolean() ? pz : pz*(-1);
+
                     Vec3d start = Vec3d.of(pos).add(
-                        ((world.random.nextDouble()*2)-1)*1.5,
+                        /*((world.random.nextDouble()*2)-1)*1.5,
                         world.random.nextDouble()+0.5,
-                        ((world.random.nextDouble()*2)-1)*1.5
+                        ((world.random.nextDouble()*2)-1)*1.5*/
+                        px, py, pz
                         );
 
-                    Vec3d velocity = target
-                        .subtract(start)
+                    Vec3d velocity = 
+                        target.subtract(start)
                         //.normalize()
                         .multiply((1 / 30) - world.random.nextDouble() * 0.01);
 
@@ -282,7 +289,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     );*/
                     spawnEnchantParticle(start, velocity.x, velocity.y, velocity.z);
                 }
-                EnchantmentMigratorMod.LOGGER.info("ambua noises"); // TODO: remove logger
+                //EnchantmentMigratorMod.LOGGER.info("ambua noises");
             } else{
                 ptick--;
             }

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "enchantmentmigrator",
-	"version": "1.12.10.1",
+	"version": "1.12.11",
 	"name": "Enchantment Migrator",
 	"description": "A mod that moves the top enchantment of an item onto a book",
 	"authors": [
