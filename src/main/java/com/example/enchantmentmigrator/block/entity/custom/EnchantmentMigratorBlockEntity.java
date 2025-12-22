@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.example.enchantmentmigrator.EnchantmentMigratorMod;
 import com.example.enchantmentmigrator.block.entity.ImplementedInventory;
 import com.example.enchantmentmigrator.block.entity.ModBlockEntities;
 import com.example.enchantmentmigrator.item.RazuliDustItem;
@@ -233,18 +234,21 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (rotation > 360) {
             rotation = 0f;
         }
-        if (ptick <= 0) {
-            ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
-            world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY(), pos.getZ(),
-                /*(Math.random()*-(velocityMult))+(Math.random()*velocityMult),
-                (Math.random()*3),
-                (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
-                world.random.nextGaussian() * 0.02f,  //velocityMult,
-                (-world.random.nextDouble()) * 2,   //(velocityMult*4),
-                world.random.nextGaussian() * 0.02f  //velocityMult
-            );
-        } else{
-            ptick--;
+        if (!inventory.get(INPUT_SLOT).isEmpty()) {
+            if (ptick <= 0) {
+                ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
+                world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY()+0.25, pos.getZ(),
+                    /*(Math.random()*-(velocityMult))+(Math.random()*velocityMult),
+                    (Math.random()*3),
+                    (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
+                    world.random.nextGaussian() * 3,  //velocityMult,
+                    world.random.nextDouble() * 5,   //(velocityMult*4),
+                    world.random.nextGaussian() * 3f  //velocityMult
+                );
+                EnchantmentMigratorMod.LOGGER.info("ambua noises");
+            } else{
+                ptick--;
+            }
         }
     }
 
