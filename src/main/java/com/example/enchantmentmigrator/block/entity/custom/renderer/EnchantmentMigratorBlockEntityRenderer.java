@@ -1,5 +1,7 @@
 package com.example.enchantmentmigrator.block.entity.custom.renderer;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.example.enchantmentmigrator.block.entity.custom.EnchantmentMigratorBlockEntity;
 
 import net.minecraft.client.MinecraftClient;
@@ -19,8 +21,8 @@ import net.minecraft.world.World;
 public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRenderer<EnchantmentMigratorBlockEntity> {
     //private static final float scale = 0.5f;
     //private static final int xRotation =  (int)(Math.round(Math.random()*360));
-    private final int zRotation1 = EnchantmentMigratorBlockEntity.getZRotation1();
-    private final int zRotation2 = EnchantmentMigratorBlockEntity.getZRotation2();
+    int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //EnchantmentMigratorBlockEntity.getZRotation1();
+    int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //EnchantmentMigratorBlockEntity.getZRotation2();
 
     public EnchantmentMigratorBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
     }
