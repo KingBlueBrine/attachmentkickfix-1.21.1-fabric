@@ -254,7 +254,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                     double vx = (world.random.nextDouble() - 0.5) * spread;
                     double vz = (world.random.nextDouble() - 0.5) * spread;
-                    double vy = 0.25 + world.random.nextDouble() * 0.35;
+                    double vy = 0.05 + world.random.nextDouble() * 0.1;
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
@@ -272,7 +272,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                     Vec3d velocity = target
                         .subtract(start)
-                        .normalize()
+                        //.normalize()
                         .multiply((1 / 30) - world.random.nextDouble() * 0.01);
 
                     /*world.addParticle(
