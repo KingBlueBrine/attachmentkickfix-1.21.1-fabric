@@ -23,6 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
@@ -54,6 +55,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private float rotation = (float)(Math.random()*360);
     private static int zRotation1 = (int)(Math.round(Math.random()*360));
     private static int zRtoation2 = (int)(Math.round(Math.random()*360));
+    private int ptick;
+    private float velocityMult = 0.5f;
 
     /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
     static {
@@ -225,6 +228,19 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (rotation > 360) {
             rotation = 0f;
         }
+        if (ptick == 0) {
+            ptick = (Math.max((int)(world.random.nextInt(100)),20));
+            world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY(), pos.getZ(),
+                /*(Math.random()*-(velocityMult))+(Math.random()*velocityMult),
+                (Math.random()*3),
+                (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
+                world.random.nextGaussian() * velocityMult,
+                world.random.nextDouble() * (velocityMult*4),
+                world.random.nextGaussian() * velocityMult
+            );
+        } else{
+            ptick--;
+        }
     }
 
     @Override
@@ -386,5 +402,4 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     public static int getZRotation2() {
         return zRtoation2;
     }
-
 }
