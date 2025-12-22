@@ -1,5 +1,7 @@
 package com.example.enchantmentmigrator.block.entity.custom;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.example.enchantmentmigrator.block.entity.ImplementedInventory;
@@ -53,8 +55,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private int xpCost;
     private int soundCooldown = 0;
     private float rotation = (float)(Math.random()*360);
-    //private static int zRotation1 = (int)(Math.round(Math.random()*360));
-    //private static int zRtoation2 = (int)(Math.round(Math.random()*360));
+    private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
+    private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
     private float velocityMult = 0.5f;
 
@@ -399,10 +401,10 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     //public record zRotations = (int zRotation1, int zRotation2) {}
-    /*public static int getZRotation1() {
+    public static int getZRotation1() {
         return zRotation1;
     }
     public static int getZRotation2() {
-        return zRtoation2;
-    }*/
+        return zRotation2;
+    }
 }
