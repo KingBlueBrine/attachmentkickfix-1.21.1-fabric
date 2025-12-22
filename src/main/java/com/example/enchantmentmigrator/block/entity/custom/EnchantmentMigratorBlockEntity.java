@@ -270,17 +270,17 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     float pz = world.random.nextFloat() +1.5f;
                     pz = world.random.nextBoolean() ? pz : pz*(-1);*/
 
-                    double angle = world.random.nextDouble() * Math.PI * 2.0;
+                    float angle = world.random.nextFloat() * (float)(Math.PI) * 2.0f;
 
                     // Random radius (1.5 → 2.5)
-                    double radius = 1.5 + world.random.nextDouble();
+                    float radius = 1.75f + (world.random.nextFloat() * 0.5f);
 
                     // Random height (1 ± 0.5)
-                    double yOffset = 1.0 + (world.random.nextDouble() - 0.5);
+                    float yOffset = 1.0f + (world.random.nextFloat() - 0.5f);
 
-                    double x = Math.cos(angle) * radius;
-                    double y = yOffset;
-                    double z = Math.sin(angle) * radius;
+                    float x = (float) (Math.cos(angle) * radius);
+                    float y = yOffset;
+                    float z = (float) (Math.sin(angle) * radius);
 
                     Vec3d start = Vec3d.of(pos).add(
                         /*((world.random.nextDouble()*2)-1)*1.5,
@@ -290,17 +290,28 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         x, y, z
                         );
 
-                    Vec3d velocity = 
+                    /*Vec3d velocity = 
                         target.subtract(start)
                         //.normalize()
-                        .multiply((1 / 30) - world.random.nextDouble() * 0.01);
+                        .multiply((1 / 30) - world.random.nextFloat() * 0.01f);*/
+
+                    Vec3d direction = target.subtract(start);
+
+                    double distance = direction.length();
+                    //if (distance < 0.001) return Vec3d.ZERO;
+
+                    direction = direction.normalize();
+
+                    // Speed scales with distance (vanilla behavior)
+                    double speed = 0.02 + (distance * 0.02);
+                    direction.multiply(speed);
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
                         start.x, start.y, start.z,
                         velocity.x, velocity.y, velocity.z
                     );*/
-                    spawnEnchantParticle(start, velocity.x, velocity.y, velocity.z);
+                    spawnEnchantParticle(start, direction.x, direction.y, direction.z);
                 }
                 //EnchantmentMigratorMod.LOGGER.info("ambua noises");
             } else{
