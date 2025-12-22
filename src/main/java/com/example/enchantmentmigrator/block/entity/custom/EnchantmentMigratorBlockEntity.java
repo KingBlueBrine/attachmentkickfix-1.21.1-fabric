@@ -265,15 +265,15 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 } else {
 
                     Vec3d start = Vec3d.of(pos).add(
-                        world.random.nextDouble()+1.5,
-                        world.random.nextDouble()+1.5,
-                        world.random.nextDouble()+1.5
+                        ((world.random.nextDouble()*2)-1)*1.5,
+                        world.random.nextDouble()+0.5,
+                        ((world.random.nextDouble()*2)-1)*1.5
                         );
 
                     Vec3d velocity = target
                         .subtract(start)
                         .normalize()
-                        .multiply(0.12 + world.random.nextDouble() * 0.05);
+                        .multiply((1 / 30) - world.random.nextDouble() * 0.01);
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
@@ -290,7 +290,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public void spawnEnchantParticle(Vec3d start, double vx, double vy, double vz) {
-        world.addParticle(ParticleTypes.ENCHANT, start.x, start.y, start.z, vx, vy, vz);
+        world.addParticle(ParticleTypes.END_ROD, start.x, start.y, start.z, vx, vy, vz);
     }
 
     @Override
