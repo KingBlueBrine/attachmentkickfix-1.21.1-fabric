@@ -39,6 +39,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 
@@ -237,19 +238,59 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (!inventory.get(INPUT_SLOT).isEmpty()) {
             if (ptick <= 0) {
                 ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
-                world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY()+0.25, pos.getZ(),
-                    /*(Math.random()*-(velocityMult))+(Math.random()*velocityMult),
-                    (Math.random()*3),
-                    (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
-                    world.random.nextGaussian() * 3,  //velocityMult,
-                    world.random.nextDouble() * 5,   //(velocityMult*4),
-                    world.random.nextGaussian() * 3f  //velocityMult
-                );
-                EnchantmentMigratorMod.LOGGER.info("ambua noises");
+
+                Vec3d target = Vec3d.ofCenter(pos).add(0, 1.5, 0);
+
+                if (inventory.get(INPUT_SLOT).hasEnchantments()&&inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK)&&inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST)) {
+                    /*world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY()+0.25, pos.getZ(),
+                        (Math.random()*-(velocityMult))+(Math.random()*velocityMult),
+                        (Math.random()*3),
+                        (Math.random()*-(velocityMult))+(Math.random()*velocityMult)
+                        world.random.nextGaussian() * 3,  //velocityMult,
+                        world.random.nextDouble() * 5,   //(velocityMult*4),
+                        world.random.nextGaussian() * 3f  //velocityMult 
+                    );*/
+                    double spread = 0.25;
+
+                    double vx = (world.random.nextDouble() - 0.5) * spread;
+                    double vz = (world.random.nextDouble() - 0.5) * spread;
+                    double vy = 0.25 + world.random.nextDouble() * 0.35;
+
+                    /*world.addParticle(
+                        ParticleTypes.ENCHANT,
+                        target.x, target.y, target.z,
+                        vx, vy, vz
+                    );*/
+                    spawnEnchantParticle(target, vx, vy, vz);
+                } else {
+
+                    Vec3d start = Vec3d.of(pos).add(
+                        world.random.nextDouble()+1.5,
+                        world.random.nextDouble()+1.5,
+                        world.random.nextDouble()+1.5
+                        );
+
+                    Vec3d velocity = target
+                        .subtract(start)
+                        .normalize()
+                        .multiply(0.12 + world.random.nextDouble() * 0.05);
+
+                    /*world.addParticle(
+                        ParticleTypes.ENCHANT,
+                        start.x, start.y, start.z,
+                        velocity.x, velocity.y, velocity.z
+                    );*/
+                    spawnEnchantParticle(start, velocity.x, velocity.y, velocity.z);
+                }
+                EnchantmentMigratorMod.LOGGER.info("ambua noises"); // TODO: remove logger
             } else{
                 ptick--;
             }
         }
+    }
+
+    public void spawnEnchantParticle(Vec3d start, double vx, double vy, double vz) {
+        world.addParticle(ParticleTypes.ENCHANT, start.x, start.y, start.z, vx, vy, vz);
     }
 
     @Override
