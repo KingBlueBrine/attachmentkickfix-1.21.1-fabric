@@ -58,7 +58,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
-    private float velocityMult = 0.5f;
+    //private float velocityMult = 0.5f;
 
     /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
     static {
@@ -233,15 +233,15 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         if (rotation > 360) {
             rotation = 0f;
         }
-        if (ptick == 0) {
-            ptick = (Math.max((int)(world.random.nextInt(100)),20));
+        if (ptick <= 0) {
+            ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
             world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY(), pos.getZ(),
                 /*(Math.random()*-(velocityMult))+(Math.random()*velocityMult),
                 (Math.random()*3),
                 (Math.random()*-(velocityMult))+(Math.random()*velocityMult)*/
-                world.random.nextGaussian() * velocityMult,
-                (-world.random.nextDouble()) * (velocityMult*4),
-                world.random.nextGaussian() * velocityMult
+                world.random.nextGaussian() * 0.02f,  //velocityMult,
+                (-world.random.nextDouble()) * 2,   //(velocityMult*4),
+                world.random.nextGaussian() * 0.02f  //velocityMult
             );
         } else{
             ptick--;
