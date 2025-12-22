@@ -253,7 +253,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                     double vx = (world.random.nextDouble() - 0.5) * spread;
                     double vz = (world.random.nextDouble() - 0.5) * spread;
-                    double vy = 0.05 + world.random.nextDouble() * 0.01;
+                    double vy = 0.05 + world.random.nextDouble() * 0.02;
 
                     /*world.addParticle(
                         ParticleTypes.ENCHANT,
@@ -263,18 +263,31 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     spawnEnchantParticle(target, vx, vy, vz);
                 } else {
 
-                    float px = world.random.nextFloat() +1.5f;
+                    /*float px = world.random.nextFloat() +1.5f;
                     px = world.random.nextBoolean() ? px : px*(-1);
                     float py = world.random.nextFloat() * 0.5f;
                     py = world.random.nextBoolean() ? py+0.5f : (px*(-1))+0.5f;
                     float pz = world.random.nextFloat() +1.5f;
-                    pz = world.random.nextBoolean() ? pz : pz*(-1);
+                    pz = world.random.nextBoolean() ? pz : pz*(-1);*/
+
+                    double angle = world.random.nextDouble() * Math.PI * 2.0;
+
+                    // Random radius (1.5 → 2.5)
+                    double radius = 1.5 + world.random.nextDouble();
+
+                    // Random height (1 ± 0.5)
+                    double yOffset = 1.0 + (world.random.nextDouble() - 0.5);
+
+                    double x = Math.cos(angle) * radius;
+                    double y = yOffset;
+                    double z = Math.sin(angle) * radius;
 
                     Vec3d start = Vec3d.of(pos).add(
                         /*((world.random.nextDouble()*2)-1)*1.5,
                         world.random.nextDouble()+0.5,
                         ((world.random.nextDouble()*2)-1)*1.5*/
-                        px, py, pz
+                        //px, py, pz
+                        x, y, z
                         );
 
                     Vec3d velocity = 
