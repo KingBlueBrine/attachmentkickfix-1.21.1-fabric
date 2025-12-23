@@ -248,9 +248,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     EnchantmentHelper.set(inputWithoutEnchants, null);
                     String inputName = inputStack.toString();
                     
-                    Boolean isDiamond = inputName.contains("Diamond");
-                    Boolean isDragon = inputName.contains("Dragon");
-                    if (inputName.contains("Netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
+                    Boolean isDiamond = inputName.contains("diamond");
+                    Boolean isDragon = inputName.contains("dragon");
+                    if (inputName.contains("netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
                         ptick = 30;  //4;
 
                         int particleCount = isDragon ? 24 : 8;
@@ -258,17 +258,18 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         //double angularSpeed = 0.25; // radians per tick
                         double tangentialSpeed = 0.03;
 
-                        double cx = pos.getX() + 0.5;
-                        double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
-                        double cz = pos.getZ() + 0.5;
+                        //double cx = pos.getX() + 0.5;
+                        //double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
+                        //double cz = pos.getZ() + 0.5;
+                        Vec3d end = Vec3d.ofCenter(pos).add(0.5, isDragon ? 0.5 : 1, 0.5);
 
                         for (int i = 0; i < particleCount; i++) {
                             double t = isDragon ? (double) i / particleCount : 0;
                             double theta = isDragon ? t * Math.PI * 2 : (2 * Math.PI / particleCount) * i;
 
-                            cx =+ (Math.cos(theta) * radius);
-                            cz =+ (Math.sin(theta) * radius);
-                            cy = isDragon ? cy + t * 1.5 : cy+(Math.sin(theta) * 0.05);
+                            double cx = end.x+ (Math.cos(theta) * radius);
+                            double cz = end.z+ (Math.sin(theta) * radius);
+                            double cy = isDragon ? end.y + t * 1.5 : end.y+(Math.sin(theta) * 0.05);
 
                             double vx = isDiamond ? 0 : (Math.sin(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
                             double vz = isDiamond ? 0 : (-Math.cos(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
@@ -279,7 +280,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         }
                         //return;
                     } else {
-                        ptick = (Math.max((int)(world.random.nextInt(79)+1),20));
+                        ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
 
                         double spread = 0.1;
 
