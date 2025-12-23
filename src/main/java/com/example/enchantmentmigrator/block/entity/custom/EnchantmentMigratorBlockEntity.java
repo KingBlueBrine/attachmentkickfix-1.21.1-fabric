@@ -36,6 +36,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -235,93 +236,91 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             rotation = 0f;
         }
         if (!inventory.get(INPUT_SLOT).isEmpty()) {
+            ptick--;
             if (ptick <= 0) {
-                ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
 
+                ItemStack inputStack = inventory.get(INPUT_SLOT);
                 Vec3d target = Vec3d.ofCenter(pos).add(0, 1, 0);
 
-                if (inventory.get(INPUT_SLOT).hasEnchantments()&&inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK)&&inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST)) {
-                    /*world.addParticle(ParticleTypes.ENCHANT, pos.getX(), pos.getY()+0.25, pos.getZ(),
-                        (Math.random()*-(velocityMult))+(Math.random()*velocityMult),
-                        (Math.random()*3),
-                        (Math.random()*-(velocityMult))+(Math.random()*velocityMult)
-                        world.random.nextGaussian() * 3,  //velocityMult,
-                        world.random.nextDouble() * 5,   //(velocityMult*4),
-                        world.random.nextGaussian() * 3f  //velocityMult 
-                    );*/
-                    double spread = 0.05;
+                if (inputStack.hasEnchantments()&&inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK)&&inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST)) {
+                    
+                    ItemStack inputWithoutEnchants = inputStack.copy();
+                    EnchantmentHelper.set(inputWithoutEnchants, null);
+                    String inputName = inputStack.toString();
+                    
+                    Boolean isDiamond = inputName.contains("Diamond");
+                    Boolean isDragon = inputName.contains("Dragon");
+                    if (inputName.contains("Netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
+                        ptick = 30;  //4;
 
-                    double vx = (world.random.nextDouble() - 0.5) * spread;
-                    double vz = (world.random.nextDouble() - 0.5) * spread;
-                    double vy = 0.05 + world.random.nextDouble() * 0.02;
+                        int particleCount = isDragon ? 24 : 8;
+                        double radius = 1.2;
+                        //double angularSpeed = 0.25; // radians per tick
+                        double tangentialSpeed = 0.03;
 
-                    /*world.addParticle(
-                        ParticleTypes.ENCHANT,
-                        target.x, target.y, target.z,
-                        vx, vy, vz
-                    );*/
-                    spawnEnchantParticle(target, vx, vy, vz);
+                        double cx = pos.getX() + 0.5;
+                        double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
+                        double cz = pos.getZ() + 0.5;
+
+                        for (int i = 0; i < particleCount; i++) {
+                            double t = isDragon ? (double) i / particleCount : 0;
+                            double theta = isDragon ? t * Math.PI * 2 : (2 * Math.PI / particleCount) * i;
+
+                            cx =+ (Math.cos(theta) * radius);
+                            cz =+ (Math.sin(theta) * radius);
+                            cy = isDragon ? cy + t * 1.5 : cy+(Math.sin(theta) * 0.05);
+
+                            double vx = isDiamond ? 0 : (Math.sin(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
+                            double vz = isDiamond ? 0 : (-Math.cos(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
+                            double vy = isDragon ? 0.14 : 0;
+
+                            //Vec3d start = Vec3d.add(x, x, vz, z)
+                            spawnEnchantParticle(cx, cy, cz, vx, vy, vz);
+                        }
+                        //return;
+                    } else {
+                        ptick = (Math.max((int)(world.random.nextInt(79)+1),20));
+
+                        double spread = 0.1;
+
+                        double vx = (world.random.nextDouble() - 0.5) * spread;
+                        double vz = (world.random.nextDouble() - 0.5) * spread;
+                        double vy = 0.05 + world.random.nextDouble() * 0.02;
+
+                        spawnEnchantParticle(target.x, target.y, target.z, vx, vy, vz);
+                        //return;
+                    }
+                    
+                    
                 } else {
-
-                    /*float px = world.random.nextFloat() +1.5f;
-                    px = world.random.nextBoolean() ? px : px*(-1);
-                    float py = world.random.nextFloat() * 0.5f;
-                    py = world.random.nextBoolean() ? py+0.5f : (px*(-1))+0.5f;
-                    float pz = world.random.nextFloat() +1.5f;
-                    pz = world.random.nextBoolean() ? pz : pz*(-1);*/
 
                     float angle = world.random.nextFloat() * (float)(Math.PI) * 2.0f;
 
-                    // Random radius (1.5 → 2.5)
                     float radius = 1.75f + (world.random.nextFloat() * 0.5f);
-
-                    // Random height (1 ± 0.5)
                     float yOffset = 1.0f + (world.random.nextFloat() - 0.5f);
 
                     float x = (float) (Math.cos(angle) * radius);
                     float y = yOffset;
                     float z = (float) (Math.sin(angle) * radius);
 
-                    Vec3d start = Vec3d.of(pos).add(
-                        /*((world.random.nextDouble()*2)-1)*1.5,
-                        world.random.nextDouble()+0.5,
-                        ((world.random.nextDouble()*2)-1)*1.5*/
-                        //px, py, pz
-                        x, y, z
-                        );
+                    Vec3d start = Vec3d.of(pos).add(x, y, z);
 
                     Vec3d velocity = 
                         target.subtract(start)
                         //.normalize()
-                        .multiply(0.15 /*- world.random.nextFloat() * 0.01f*/);
+                        .multiply(0.09 /*- world.random.nextFloat() * 0.01f*/
+                    );
 
-                    /*Vec3d direction = target.subtract(start);
-
-                    double distance = direction.length();
-                    //if (distance < 0.001) return Vec3d.ZERO;
-
-                    direction = direction.normalize();
-
-                    // Speed scales with distance (vanilla behavior)
-                    double speed = 0.02 + (distance * 0.02);
-                    direction.multiply(speed);*/
-
-                    /*world.addParticle(
-                        ParticleTypes.ENCHANT,
-                        start.x, start.y, start.z,
-                        velocity.x, velocity.y, velocity.z
-                    );*/
-                    spawnEnchantParticle(start, velocity.x, velocity.y, velocity.z);
-                }
+                    spawnEnchantParticle(start.x, start.y, start.z, velocity.x, velocity.y, velocity.z);
+                    //return;
+                }   
                 //EnchantmentMigratorMod.LOGGER.info("ambua noises");
-            } else{
-                ptick--;
             }
         }
     }
 
-    public void spawnEnchantParticle(Vec3d start, double vx, double vy, double vz) {
-        world.addParticle(ParticleTypes.END_ROD, start.x, start.y, start.z, vx, vy, vz);
+    public void spawnEnchantParticle(double sx, double sy, double sz, double vx, double vy, double vz) {
+        world.addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
     }
 
     @Override
