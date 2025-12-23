@@ -251,7 +251,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     Boolean isDiamond = inputName.contains("diamond");
                     Boolean isDragon = inputName.contains("dragon");
                     if (inputName.contains("netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
-                        ptick = 30;  //4;
+                        ptick = 60;  //4;
 
                         int particleCount = isDragon ? 24 : 8;
                         double radius = 1.2;
