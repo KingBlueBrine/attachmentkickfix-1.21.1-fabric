@@ -253,8 +253,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     if (inputName.contains("netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
                         ptick = 60;  //4;
 
-                        int particleCount = isDragon ? 24 : isDiamond ? 16 : 8;
-                        double radius = isDragon ? 0.8 : isDiamond ? 1 : 1.2;
+                        int particleCount = isDragon ? 24 : isDiamond ? 8 : 16;
+                        double radius = isDragon ? 0.8 : isDiamond ? 1.2 : 1;
                         //double angularSpeed = 0.25; // radians per tick
                         double tangentialSpeed = 0.03;
 
