@@ -265,7 +265,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                         for (int i = 0; i < particleCount; i++) {
                             double t = isDragon ? (double) i / particleCount : 0;
-                            double theta = isDragon ? (t * Math.PI * 2) + Math.toRadians(rotation*30) : (2 * Math.PI / particleCount) * i;
+                            double theta = isDragon ? (t * Math.PI * 2) + Math.toRadians(rotation*10  ) : (2 * Math.PI / particleCount) * i;
 
                             double cx = end.x+ (Math.cos(theta) * radius);
                             double cz = end.z+ (Math.sin(theta) * radius);
