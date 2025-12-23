@@ -75,7 +75,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         for (int i = 0; i < 18; i++) {
             //INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
             tempList[i] = Identifier.of(modID, path + "cycling/" + i + ".png");
-            EnchantmentMigratorMod.LOGGER.info("registering "+i+".png texture.");
+            EnchantmentMigratorMod.LOGGER.info("registering "+i+".png texture");
             //INPUT_SLOT_ICONS.set(i, Identifier.of(modID, path + "cycling/" + i + ".png"));
         }
         //INPUT_SLOT_ICONS = List.of(tempList);
@@ -186,8 +186,8 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         //RenderSystem.setShaderTexture(0, DISPLAY_TEXTURE);
         RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 
-        inputSlotIcon.render(this.handler, context, delta, this.x, this.y);
-        EnchantmentMigratorMod.LOGGER.info("Rendering sprites at x="+this.x+" and at y="+this.y);
+        inputSlotIcon.render(this.handler, context, delta, 0, 0);
+        //EnchantmentMigratorMod.LOGGER.info("Rendering sprites at x="+this.x+" and at y="+this.y);
 
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
