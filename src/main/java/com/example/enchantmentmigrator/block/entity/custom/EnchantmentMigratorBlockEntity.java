@@ -262,10 +262,11 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         //double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
                         //double cz = pos.getZ() + 0.5;
                         Vec3d end = Vec3d.ofCenter(pos).add(0, isDragon ? 0.5 : 1, 0);
+                        double pRotation = Math.toRadians(rotation);
 
                         for (int i = 0; i < particleCount; i++) {
                             double t = isDragon ? (double) i / particleCount : 0;
-                            double theta = isDragon ? (t * Math.PI * 2) + Math.toRadians(rotation*10  ) : (2 * Math.PI / particleCount) * i;
+                            double theta = isDragon ? (t * Math.PI * 2) + (pRotation * 15) : ((2 * Math.PI / particleCount) * i) + pRotation * 2.5;
 
                             double cx = end.x+ (Math.cos(theta) * radius);
                             double cz = end.z+ (Math.sin(theta) * radius);
