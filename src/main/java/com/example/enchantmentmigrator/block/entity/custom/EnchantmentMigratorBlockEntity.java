@@ -261,11 +261,11 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         //double cx = pos.getX() + 0.5;
                         //double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
                         //double cz = pos.getZ() + 0.5;
-                        Vec3d end = Vec3d.ofCenter(pos).add(0.5, isDragon ? 0.5 : 1, 0.5);
+                        Vec3d end = Vec3d.ofCenter(pos).add(0, isDragon ? 0.5 : 1, 0);
 
                         for (int i = 0; i < particleCount; i++) {
                             double t = isDragon ? (double) i / particleCount : 0;
-                            double theta = isDragon ? t * Math.PI * 2 : (2 * Math.PI / particleCount) * i;
+                            double theta = isDragon ? (t * Math.PI * 2) * (rotation) : (2 * Math.PI / particleCount) * i;
 
                             double cx = end.x+ (Math.cos(theta) * radius);
                             double cz = end.z+ (Math.sin(theta) * radius);
@@ -273,7 +273,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                             double vx = isDiamond ? 0 : (Math.sin(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
                             double vz = isDiamond ? 0 : (-Math.cos(theta) * tangentialSpeed) + (world.random.nextGaussian() * 0.03);
-                            double vy = isDragon ? 0.14 : 0;
+                            double vy = isDragon ? 0.04 : 0;
 
                             //Vec3d start = Vec3d.add(x, x, vz, z)
                             spawnEnchantParticle(cx, cy, cz, vx, vy, vz);
@@ -294,6 +294,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     
                     
                 } else {
+                    ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
 
                     float angle = world.random.nextFloat() * (float)(Math.PI) * 2.0f;
 
