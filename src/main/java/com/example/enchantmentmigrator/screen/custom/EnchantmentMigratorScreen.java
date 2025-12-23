@@ -1,5 +1,7 @@
 package com.example.enchantmentmigrator.screen.custom;
 
+import java.util.List;
+
 //import java.util.ArrayList;
 //import java.util.List;
 
@@ -10,6 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,10 +29,11 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     //private static final Identifier[] GHOST_TEXTURES = new Identifier[9];
     private static String modID = EnchantmentMigratorMod.MOD_ID;
     private static final String path = "textures/gui/";
-    private static final String cyclingPath = path + "cyclingmain/";
+    //private static final String cyclingPath = path + "cyclingmain/";
     private static final Identifier GUI_TEXTURE = Identifier.of(modID, path + "enchantment_migrator_gui.png");
     private static final Identifier ARROW_TEXTURE = Identifier.of(modID, path + "arrow_progress.png");
     private static final Identifier NOT_ENOUGH_LEVELS = Identifier.of(modID, path + "error.png");
+    
     //private static final Identifier BOOK_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_book.png");
     //private static final Identifier RAZULI_GHOST_TEXTURE = Identifier.of(modID, path + "empty_slot_razuli_dust.png");
 
@@ -43,7 +47,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         Identifier.of(modID, cyclingPath + "6.png"),
         Identifier.of(modID, cyclingPath + "7.png"),
         Identifier.of(modID, cyclingPath + "8.png")
-    };*/
+    };
 
     private static final int GHOST_FRAME_COUNT = 18;
 
@@ -51,15 +55,24 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
 
     static {
         for (int i = 0; i < GHOST_FRAME_COUNT; i++) {
-            GHOST_TEXTURES[i] = Identifier.of(modID, cyclingPath + i + ".png");
+            GHOST_TEXTURES[i] = Identifier.of(modID, path + "cyclingmain/" + i + ".png");
         }
     }
 
     private final int ghostDuration = 40;
     private int rand = (int) (Math.floor(Math.random() * GHOST_FRAME_COUNT));
     private int tick = ghostDuration * rand;
-    private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];
+    private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];*/
     private final PlayerEntity player;
+
+    private final CyclingSlotIcon inputSlotIcon = new CyclingSlotIcon(0);
+    private static final List<Identifier> INPUT_SLOT_ICONS = null;
+
+    static {
+        for (int i = 0; i < 18; i++) {
+            INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
+        }
+    }
 
     /*static { for (int i = 0; i < 9; i++) { GHOST_TEXTURES[i] = Identifier.of(EnchantmentMigratorMod.MOD_ID,"textures/gui/cycling/" + i + ".png"); }}
     private static List<Identifier> GHOST_ICONS = new ArrayList<>();
@@ -107,16 +120,18 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     public void handledScreenTick() {
         super.handledScreenTick();
 
+        this.inputSlotIcon.updateTexture(INPUT_SLOT_ICONS);
+
         if (handler.getSlot(0).hasStack()) {return;}
 
-        tick++;
+        /*tick++;
 
         int index = (tick / ghostDuration) % GHOST_TEXTURES.length;
         DISPLAY_TEXTURE = GHOST_TEXTURES[index];
 
         if (tick >= (ghostDuration*GHOST_TEXTURES.length)) {
             tick = 0; // prevent overflow
-        }
+        }*/
 
         /*switch (tick) {
             case 0:
@@ -160,16 +175,19 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, DISPLAY_TEXTURE);
+        //RenderSystem.setShaderTexture(0, DISPLAY_TEXTURE);
+        RenderSystem.setShaderTexture(0, GUI_TEXTURE);
+
+        inputSlotIcon.render(this.handler, context, delta, 27, 47);
 
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
-        if (handler.getSlot(0).hasStack()) {
+        //if (handler.getSlot(0).hasStack()) {
             context.drawTexture(GUI_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        } else {
-            context.drawTexture(DISPLAY_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        }
+        //} else {
+            //context.drawTexture(DISPLAY_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        //}
         
 
         //context.drawText(textRenderer, "Migrate Enchantments", x, mouseY, y, cursorDragging);

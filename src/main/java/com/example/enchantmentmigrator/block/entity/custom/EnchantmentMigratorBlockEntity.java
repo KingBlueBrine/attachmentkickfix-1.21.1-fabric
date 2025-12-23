@@ -1,5 +1,6 @@
 package com.example.enchantmentmigrator.block.entity.custom;
 
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +20,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -60,6 +62,19 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
+
+    private static final Map<Item, SoundData> ITEM_SOUNDS = Map.ofEntries(
+        Map.entry(Items.IRON_BOOTS,      new SoundData(ModSounds.BLUETEETH, 5f)),
+        Map.entry(Items.IRON_HOE,        new SoundData(ModSounds.MOOW, 28f)),
+        Map.entry(Items.DIAMOND_SHOVEL,  new SoundData(ModSounds.MILK_THISTLE, 14f)),
+        Map.entry(Items.IRON_SWORD,      new SoundData(ModSounds.CHICKEN, 38f)),
+        Map.entry(Items.IRON_LEGGINGS,   new SoundData(ModSounds.MENOPAUSE_SYMPTOMS, 13f)),
+        Map.entry(Items.CARVED_PUMPKIN,  new SoundData(ModSounds.ZERO_CALORIES, 16f)),
+        Map.entry(Items.SHEARS,          new SoundData(ModSounds.GUINEA_PIG_DYING, 14f)),
+        Map.entry(Items.STONE_SWORD,     new SoundData(ModSounds.MY_GUINEA_PIG, 11f)),
+        Map.entry(Items.FISHING_ROD,     new SoundData(ModSounds.WEIGHT_LOSS, 3f)),
+        Map.entry(Items.DIAMOND_HOE,     new SoundData(ModSounds.UNI, 13f))
+    );
     //private float velocityMult = 0.5f;
 
     /*private static BlockEntityType<EnchantmentMigratorBlockEntity> ENCHANTMENT_MIGRATOR_BE;
@@ -281,7 +296,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         }
                         //return;
                     } else {
-                        ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
+                        ptick = (Math.max((int)(world.random.nextInt(49)+1),20));
 
                         double spread = 0.1;
 
@@ -295,7 +310,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     
                     
                 } else {
-                    ptick = (Math.max((int)(world.random.nextInt(99)+1),20));
+                    ptick = (Math.max((int)(world.random.nextInt(79)+1),20));
 
                     float angle = world.random.nextFloat() * (float)(Math.PI) * 2.0f;
 
@@ -350,7 +365,14 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 soundDuration = 0.2;
             } else { 
                 if (!inputStack.isEmpty()) {
-            switch (inputStack.getItem().toString()) {
+
+                    SoundData data = ITEM_SOUNDS.getOrDefault(inputStack.getItem(), 
+                        new SoundData(SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, 0.2f));
+                    
+                    sound = data.sound();
+                    soundDuration = data.soundDuration();
+
+            /*switch (inputStack.getItem().toString()) {
                 case "minecraft:iron_boots":
                     sound = ModSounds.BLUETEETH;
                     soundDuration = 5;
@@ -395,7 +417,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     sound = SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM;
                     soundDuration = 0.2;
                     break;
-            }}}
+            }*/
+                }
+            }
         }
         if (sound != null) {
              world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
