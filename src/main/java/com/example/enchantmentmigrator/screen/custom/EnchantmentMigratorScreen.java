@@ -1,6 +1,7 @@
 package com.example.enchantmentmigrator.screen.custom;
 
-import java.util.List;
+import java.util.Arrays;
+
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -66,12 +67,18 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     private final PlayerEntity player;
 
     private final CyclingSlotIcon inputSlotIcon = new CyclingSlotIcon(0);
-    private static final List<Identifier> INPUT_SLOT_ICONS = null;
+    private static Identifier[] tempList = new Identifier[18];
+    //private static final List<Identifier> INPUT_SLOT_ICONS = Arrays.asList(tempList);
 
     static {
+        
         for (int i = 0; i < 18; i++) {
-            INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
+            //INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
+            tempList[i] = Identifier.of(modID, path + "cycling/" + i + ".png");
+            //INPUT_SLOT_ICONS.set(i, Identifier.of(modID, path + "cycling/" + i + ".png"));
         }
+        //INPUT_SLOT_ICONS = List.of(tempList);
+
     }
 
     /*static { for (int i = 0; i < 9; i++) { GHOST_TEXTURES[i] = Identifier.of(EnchantmentMigratorMod.MOD_ID,"textures/gui/cycling/" + i + ".png"); }}
@@ -120,7 +127,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     public void handledScreenTick() {
         super.handledScreenTick();
 
-        this.inputSlotIcon.updateTexture(INPUT_SLOT_ICONS);
+        this.inputSlotIcon.updateTexture(Arrays.asList(tempList));
 
         if (handler.getSlot(0).hasStack()) {return;}
 
@@ -178,7 +185,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         //RenderSystem.setShaderTexture(0, DISPLAY_TEXTURE);
         RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 
-        inputSlotIcon.render(this.handler, context, delta, 27, 47);
+        inputSlotIcon.render(this.handler, context, delta, this.x, this.y);
 
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
