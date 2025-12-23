@@ -64,7 +64,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     private int rand = (int) (Math.floor(Math.random() * GHOST_FRAME_COUNT));
     private int tick = ghostDuration * rand;
     private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];*/
-    private final PlayerEntity player;
+    private final PlayerEntity player; 
 
     private final CyclingSlotIcon inputSlotIcon = new CyclingSlotIcon(0);
     private static Identifier[] tempList = new Identifier[18];
@@ -75,7 +75,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         for (int i = 0; i < 18; i++) {
             //INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
             tempList[i] = Identifier.of(modID, path + "cycling/" + i + ".png");
-            EnchantmentMigratorMod.LOGGER.info("registering "+i+".png texture");
+            EnchantmentMigratorMod.LOGGER.info("registering "+i+".png texture.");
             //INPUT_SLOT_ICONS.set(i, Identifier.of(modID, path + "cycling/" + i + ".png"));
         }
         //INPUT_SLOT_ICONS = List.of(tempList);
@@ -187,6 +187,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 
         inputSlotIcon.render(this.handler, context, delta, this.x, this.y);
+        EnchantmentMigratorMod.LOGGER.info("Rendering sprites at x="+this.x+" and at y="+this.y);
 
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
