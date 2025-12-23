@@ -75,6 +75,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         for (int i = 0; i < 18; i++) {
             //INPUT_SLOT_ICONS.add(Identifier.of(modID, path + "cycling/" + i + ".png"));
             tempList[i] = Identifier.of(modID, path + "cycling/" + i + ".png");
+            EnchantmentMigratorMod.LOGGER.info("registering "+i+".png texture");
             //INPUT_SLOT_ICONS.set(i, Identifier.of(modID, path + "cycling/" + i + ".png"));
         }
         //INPUT_SLOT_ICONS = List.of(tempList);
