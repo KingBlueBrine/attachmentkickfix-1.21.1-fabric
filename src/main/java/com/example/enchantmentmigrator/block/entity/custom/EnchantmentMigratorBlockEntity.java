@@ -253,7 +253,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     if (inputName.contains("netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
                         ptick = 60;  //4;
 
-                        int particleCount = isDragon ? 12 : 8;
+                        int particleCount = isDragon ? 28 : 8;
                         double radius = isDragon ? 1 : 1.2;
                         //double angularSpeed = 0.25; // radians per tick
                         double tangentialSpeed = 0.03;
@@ -269,11 +269,11 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                             double cx = end.x+ (Math.cos(theta) * radius);
                             double cz = end.z+ (Math.sin(theta) * radius);
-                            double cy = isDragon ? end.y + t * 3 : end.y+(Math.sin(theta) * 0.05);
+                            double cy = isDragon ? end.y + t * 1.5 : end.y+(Math.sin(theta) * 0.05);
 
                             double vx = isDiamond ? 0 : (Math.sin(theta) * tangentialSpeed) /*+ (world.random.nextGaussian() * 0.03)*/;
                             double vz = isDiamond ? 0 : (-Math.cos(theta) * tangentialSpeed) /*+ (world.random.nextGaussian() * 0.03)*/;
-                            double vy = isDragon ? 0.08 : 0;
+                            double vy = isDragon ? 0.07 : 0;
 
                             //Vec3d start = Vec3d.add(x, x, vz, z)
                             spawnEnchantParticle(cx, cy, cz, vx, vy, vz);
