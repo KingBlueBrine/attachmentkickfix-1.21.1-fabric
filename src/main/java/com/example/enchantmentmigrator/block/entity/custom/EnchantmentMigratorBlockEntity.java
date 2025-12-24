@@ -283,9 +283,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                             double t = isDragon ? (double) i / particleCount : 0;
                             double theta = isDragon ? (t * Math.PI * 2) + (pRotation * 15) : ((2 * Math.PI / particleCount) * i) + pRotation * 2.5;
 
-                            double cx = end.x+ (Math.cos(theta) * radius);
-                            double cz = end.z+ (Math.sin(theta) * radius);
-                            double cy = isDragon ? end.y + t * 1.5 : end.y+(Math.sin(theta) * 0.05);
+                            double cx = end.x + (Math.cos(theta) * radius);
+                            double cz = end.z + (Math.sin(theta) * radius);
+                            double cy = isDragon ? end.y + t * 1.5 : end.y + (Math.sin(theta) * 0.05);
 
                             double vx = isDiamond ? 0 : (Math.sin(theta) * tangentialSpeed) /*+ (world.random.nextGaussian() * 0.03)*/;
                             double vz = isDiamond ? 0 : (-Math.cos(theta) * tangentialSpeed) /*+ (world.random.nextGaussian() * 0.03)*/;
@@ -293,6 +293,20 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
                             //Vec3d start = Vec3d.add(x, x, vz, z)
                             spawnEnchantParticle(cx, cy, cz, vx, vy, vz);
+
+                            if (isDragon) {
+                                double theta1 = (t * Math.PI * 2) + (pRotation + 180);
+                                
+                                double cx1 = end.x + (Math.cos(theta1) * radius);
+                                double cz1 = end.z + (Math.sin(theta) * radius);
+                                double cy1 = end.y + t * 1.5;
+
+                                double vx1 = (Math.sin(theta) * tangentialSpeed);
+                                double vz1 = (-Math.cos(theta) * tangentialSpeed);
+                                double vy1 = 0.07;
+
+                                spawnEnchantParticle(cx1, cy1, cz1, vx1, vy1, vz1);
+                            }
                         }
                         //return;
                     } else {
