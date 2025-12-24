@@ -1,6 +1,6 @@
 package com.example.enchantmentmigrator.screen.custom;
 
-import java.util.Arrays;
+//import java.util.Arrays;
 
 
 //import java.util.ArrayList;
@@ -13,7 +13,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
+//import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,7 +48,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         Identifier.of(modID, cyclingPath + "6.png"),
         Identifier.of(modID, cyclingPath + "7.png"),
         Identifier.of(modID, cyclingPath + "8.png")
-    };
+    };*/
 
     private static final int GHOST_FRAME_COUNT = 18;
 
@@ -63,10 +63,10 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     private final int ghostDuration = 40;
     private int rand = (int) (Math.floor(Math.random() * GHOST_FRAME_COUNT));
     private int tick = ghostDuration * rand;
-    private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];*/
+    private Identifier DISPLAY_TEXTURE = GHOST_TEXTURES[rand];
     private final PlayerEntity player; 
 
-    private final CyclingSlotIcon inputSlotIcon = new CyclingSlotIcon(0);
+    /*private final CyclingSlotIcon inputSlotIcon = new CyclingSlotIcon(0);
     private static Identifier[] tempList = new Identifier[18];
     //private static final List<Identifier> INPUT_SLOT_ICONS = Arrays.asList(tempList);
 
@@ -82,7 +82,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
 
     }
 
-    /*static { for (int i = 0; i < 9; i++) { GHOST_TEXTURES[i] = Identifier.of(EnchantmentMigratorMod.MOD_ID,"textures/gui/cycling/" + i + ".png"); }}
+    static { for (int i = 0; i < 9; i++) { GHOST_TEXTURES[i] = Identifier.of(EnchantmentMigratorMod.MOD_ID,"textures/gui/cycling/" + i + ".png"); }}
     private static List<Identifier> GHOST_ICONS = new ArrayList<>();
     static {
         for (int i = 0; i <= 8; i++) {
@@ -128,18 +128,18 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
     public void handledScreenTick() {
         super.handledScreenTick();
 
-        this.inputSlotIcon.updateTexture(Arrays.asList(tempList));
+        //this.inputSlotIcon.updateTexture(Arrays.asList(tempList));
 
         if (handler.getSlot(0).hasStack()) {return;}
 
-        /*tick++;
+        tick++;
 
         int index = (tick / ghostDuration) % GHOST_TEXTURES.length;
         DISPLAY_TEXTURE = GHOST_TEXTURES[index];
 
         if (tick >= (ghostDuration*GHOST_TEXTURES.length)) {
             tick = 0; // prevent overflow
-        }*/
+        }
 
         /*switch (tick) {
             case 0:
@@ -186,17 +186,17 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
         //RenderSystem.setShaderTexture(0, DISPLAY_TEXTURE);
         RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 
-        inputSlotIcon.render(this.handler, context, delta, 0, 0);
+        //inputSlotIcon.render(this.handler, context, delta, 0, 0);
         //EnchantmentMigratorMod.LOGGER.info("Rendering sprites at x="+this.x+" and at y="+this.y);
 
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 
-        //if (handler.getSlot(0).hasStack()) {
+        if (handler.getSlot(0).hasStack()) {
             context.drawTexture(GUI_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        //} else {
-            //context.drawTexture(DISPLAY_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        //}
+        } else {
+            context.drawTexture(DISPLAY_TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        }
         
 
         //context.drawText(textRenderer, "Migrate Enchantments", x, mouseY, y, cursorDragging);
