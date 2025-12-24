@@ -104,7 +104,7 @@ public class EnchantmentMigratorBlock extends BlockWithEntity implements BlockEn
         return false;
     }*/
 
-    @Override
+    /*@Override
     protected void spawnBreakParticles(World world, PlayerEntity player, BlockPos pos, BlockState state) {
 		//world.syncWorldEvent(player, WorldEvents.BLOCK_BROKEN, pos, getRawIdFromState(state));
 
@@ -123,7 +123,7 @@ public class EnchantmentMigratorBlock extends BlockWithEntity implements BlockEn
                 0, 0.1, 0
             );
         }
-	}
+	}*/
 }
 
 

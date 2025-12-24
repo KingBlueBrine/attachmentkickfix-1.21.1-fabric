@@ -172,7 +172,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
                 boolean moved = false;
 
                 // Slot 0 = enchantable item
-                if (originalStack.getItem().isEnchantable(originalStack) || originalStack.isOf(Items.CARVED_PUMPKIN)) {
+                if (EnchantmentHelper.hasEnchantments(originalStack)) {    // originalStack.getItem().isEnchantable(originalStack) || originalStack.isOf(Items.CARVED_PUMPKIN)) {
                     moved = this.insertItem(originalStack, 0, 1, false);
                 }
 
