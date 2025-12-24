@@ -261,11 +261,12 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     
                     ItemStack inputWithoutEnchants = inputStack.copy();
                     EnchantmentHelper.set(inputWithoutEnchants, null);
+                    Rarity rarity = inputWithoutEnchants.getRarity();
                     String inputName = inputStack.toString();
                     
                     Boolean isDiamond = inputName.contains("diamond");
                     Boolean isDragon = inputName.contains("dragon");
-                    if (inputName.contains("netherite") || isDragon || isDiamond || inputWithoutEnchants.getRarity() == Rarity.EPIC) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
+                    if (inputName.contains("netherite") || isDragon || isDiamond || rarity == Rarity.EPIC || rarity == Rarity.RARE || rarity == Rarity.UNCOMMON) { //inputStack.isOf(Items.MACE) || inputStack.isOf(Items.TRIDENT)
                         ptick = 60;  //4;
 
                         int particleCount = isDragon ? 24 : isDiamond ? 8 : 16;
@@ -276,7 +277,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         //double cx = pos.getX() + 0.5;
                         //double cy = isDragon ? pos.getY() + 0.5 : pos.getY() + 1;
                         //double cz = pos.getZ() + 0.5;
-                        Vec3d end = Vec3d.ofCenter(pos).add(0, isDragon ? 0.5 : 1, 0);
+                        Vec3d end = Vec3d.ofCenter(pos).add(0, isDragon ? 0 : 1, 0);
                         double pRotation = Math.toRadians(rotation);
                         //double pRotation1 = isDragon ? Math.toRadians(rotation + 180) : 0;
 
@@ -300,13 +301,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                                 
                                 double cx1 = end.x + (Math.cos(theta + Math.PI) * radius);
                                 double cz1 = end.z + (Math.sin(theta + Math.PI) * radius);
-                                double cy1 = end.y + t * 1.5;
 
-                                double vx1 = (Math.sin(theta) * tangentialSpeed);
-                                double vz1 = (-Math.cos(theta) * tangentialSpeed);
-                                double vy1 = 0.07;
-
-                                spawnEnchantParticle(cx1, cy1, cz1, vx1, vy1, vz1);
+                                spawnEnchantParticle(cx1, cy, cz1, vx, vy, vz);
                             }
                         }
                         //return;
@@ -523,5 +519,18 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
     public static int getZRotation2() {
         return zRotation2;
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        if (this.world == null) return false;
+
+        if (this.world.getBlockEntity(this.pos) != this) return false;
+
+            return player.squaredDistanceTo(
+            this.pos.getX() + 0.5,
+            this.pos.getY() + 0.5,
+            this.pos.getZ() + 0.5
+        ) <= 64.0;
     }
 }
