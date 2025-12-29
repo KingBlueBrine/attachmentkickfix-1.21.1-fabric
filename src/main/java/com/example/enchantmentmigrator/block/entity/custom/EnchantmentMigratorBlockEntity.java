@@ -60,7 +60,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     protected final PropertyDelegate propertyDelegate;
     private int xpCost;
     private int soundCooldown = 0;
-    private float rotation = world.random.nextFloat() * 360f; //(float)(Math.random()*360);
+    private float rotation = Math.round(ThreadLocalRandom.current().nextFloat() * 360f); //(float)(Math.random()*360);
     private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
