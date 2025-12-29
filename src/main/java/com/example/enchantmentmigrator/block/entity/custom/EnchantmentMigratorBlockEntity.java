@@ -196,6 +196,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             return false;
         }
 
+        //inventory.set(OUTPUT_SLOT, outputStack);
+
         return true;
 
         /* Give the player the output
@@ -491,7 +493,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
             this.outputStack = new ItemStack(Items.ENCHANTED_BOOK);
             EnchantmentHelper.set(outputStack, outputBuilder.build());
-            inventory.set(OUTPUT_SLOT, outputStack);
+            //inventory.set(OUTPUT_SLOT, outputStack);
 
             //ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
             //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
@@ -514,6 +516,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             this.xpCost = 0;
             markDirty();
         }
+
+        inventory.set(OUTPUT_SLOT, outputStack);
     }
 
     public float getRotation() {
