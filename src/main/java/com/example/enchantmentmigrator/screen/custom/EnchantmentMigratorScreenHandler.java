@@ -5,7 +5,7 @@ import com.example.enchantmentmigrator.item.RazuliDustItem;
 import com.example.enchantmentmigrator.screen.ModScreenHandlers;
 
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
+//import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,7 +22,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final EnchantmentMigratorBlockEntity blockEntity;
-    private ItemEnchantmentsComponent inputEnchants;
+    //private ItemEnchantmentsComponent inputEnchants;
 
 
     public EnchantmentMigratorScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
@@ -41,36 +41,36 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public boolean canInsert(ItemStack item) {
                 return (item.hasEnchantments() || item.isOf(Items.CARVED_PUMPKIN));
             }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(0);
-            }
+                //((EnchantmentMigratorBlockEntity) blockEntity).updateResult(0);
+            }*/
         });
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) {
                 return item.isOf(Items.BOOK);
             }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(1);
-            }
+                //((EnchantmentMigratorBlockEntity) blockEntity).updateResult(1);
+            }*/
         });
         this.addSlot(new Slot(inventory, 2, 76, 22){
             @Override
             public boolean canInsert(ItemStack item) {
                 return item.isOf(RazuliDustItem.RAZULI_DUST);
             }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
                 updateOutput();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(2);
-            }
+                //((EnchantmentMigratorBlockEntity) blockEntity).updateResult(2);
+            }*/
         });
         this.addSlot(new Slot(inventory, 3, 134, 47){
             @Override
@@ -87,19 +87,19 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
                 ((EnchantmentMigratorBlockEntity) blockEntity).onTakeOutput(player);
                 updateOutput();
             }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
-                ((EnchantmentMigratorBlockEntity) blockEntity).updateResult(3);
-            }
+                //((EnchantmentMigratorBlockEntity) blockEntity).updateResult(3);
+            }*/
             @Override
             public boolean canTakeItems(PlayerEntity player) {
                 if (inventory.getStack(3).isOf(Items.ENCHANTED_BOOK)) {
-                    if (hasEnoughLevels(player)) {
+                    //if (hasEnoughLevels(player)) {
                         if (((EnchantmentMigratorBlockEntity) blockEntity).canTakeOutput(player)) {
                             return true;
                         }
-                    }
+                    //}
                 }
                 return false;
             }
@@ -112,12 +112,12 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
     }
 
     public boolean hasEnoughLevels(PlayerEntity player) {
-        int xpCost = propertyDelegate.get(0);
-        return player.experienceLevel >= xpCost || player.isCreative();
+        //int xpCost = propertyDelegate.get(0);
+        return player.experienceLevel >= getXpCost() || player.isCreative();
     }
 
     private void updateOutput() {
-        ItemStack inputStack = inventory.getStack(0);
+        /*ItemStack inputStack = inventory.getStack(0);
         ItemStack bookStack = inventory.getStack(1);
         ItemStack razuliStack = inventory.getStack(2);
 
@@ -132,9 +132,9 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             this.inputEnchants = EnchantmentHelper.getEnchantments(inputStack); // outputs all enchants
             var firstEnchant = this.inputEnchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
 
-            /*Object2IntMap.Entry<RegistryEntry<Enchantment>> firstEnchant = enchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
-            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
-            //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());*/
+            //Object2IntMap.Entry<RegistryEntry<Enchantment>> firstEnchant = enchants.getEnchantmentEntries().iterator().next(); // outputs encahant from the top of the list
+            //ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
+            //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
 
             ItemEnchantmentsComponent.Builder outputBuilder = new ItemEnchantmentsComponent.Builder(this.inputEnchants);//.add(firstEnchantKey, firstEnchantLevel).build();
             outputBuilder.remove(e -> true);
@@ -144,7 +144,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             EnchantmentHelper.set(outputStack, outputBuilder.build());
 
             inventory.setStack(3, outputStack);
-        } else {inventory.setStack(3, ItemStack.EMPTY);}
+        } else { inventory.setStack(3, ItemStack.EMPTY); }*/
     }
 
 
@@ -211,10 +211,6 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
     @Override
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
-    }
-
-    public boolean validOutput() {
-        return propertyDelegate.get(0) > 0;
     }
 
     private void addPlayerInventory(PlayerInventory playerInventory) {

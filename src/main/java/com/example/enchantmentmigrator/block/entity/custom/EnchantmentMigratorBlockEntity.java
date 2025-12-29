@@ -12,6 +12,7 @@ import com.example.enchantmentmigrator.screen.custom.EnchantmentMigratorScreenHa
 import com.example.enchantmentmigrator.sound.ModSounds;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -28,12 +29,13 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -58,7 +60,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     protected final PropertyDelegate propertyDelegate;
     private int xpCost;
     private int soundCooldown = 0;
-    private float rotation = (float)(Math.random()*360);
+    private float rotation = world.random.nextFloat() * 360f; //(float)(Math.random()*360);
     private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
@@ -131,18 +133,18 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     @Override
-    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+    public NbtCompound toInitialChunkDataNbt(WrapperLookup registryLookup) {
         return createNbt(registryLookup);
     }
 
      @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    protected void writeNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, inventory, registryLookup);
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+    protected void readNbt(NbtCompound nbt, WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
         Inventories.readNbt(nbt, inventory, registryLookup);
     }
@@ -164,7 +166,12 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         decrementStack(BOOK_INPUT_SLOT);
         decrementStack(RAZULI_INPUT_SLOT);
 
-        markDirty(); // mark block entity as changed
+        player.addExperienceLevels(-(xpCost));
+
+        //markDirty(); // mark block entity as changed
+        //updateResult(3);
+
+        onInventoryChange(3);
 
         // Play sound/particles at block
         //if (world != null && pos != null) {
@@ -307,7 +314,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                         }
                         //return;
                     } else {
-                        ptick = (Math.max((int)(world.random.nextInt(49)+1),20));
+                        ptick = world.random.nextBetween(20, 50);   //(Math.max((int)(world.random.nextInt(50)+1),20));
 
                         double spread = 0.1;
 
@@ -321,7 +328,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     
                     
                 } else {
-                    ptick = (Math.max((int)(world.random.nextInt(79)+1),20));
+                    ptick = world.random.nextBetween(20, 60);   //(Math.max((int)(world.random.nextInt(79)+1),20));
 
                     float angle = world.random.nextFloat() * (float)(Math.PI) * 2.0f;
 
@@ -349,7 +356,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public void spawnEnchantParticle(double sx, double sy, double sz, double vx, double vy, double vz) {
-        world.addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
+        //world.addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
+        ((ServerWorld) world).addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
     }
 
     @Override
@@ -362,7 +370,10 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             playBlockSound(world, pos, false);
         }
 
-        markDirty();
+        //markDirty();
+        //updateResult(slot);
+
+        onInventoryChange(slot);
     }
 
     public void playBlockSound(World world, BlockPos pos, boolean skip) {
@@ -480,6 +491,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
             this.outputStack = new ItemStack(Items.ENCHANTED_BOOK);
             EnchantmentHelper.set(outputStack, outputBuilder.build());
+            inventory.set(OUTPUT_SLOT, outputStack);
 
             //ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder((ItemEnchantmentsComponent) firstEnchant);
             //builder.add(firstEnchant.getKey(), firstEnchant.getIntValue());
@@ -491,16 +503,16 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             //itemBuilder.remove(e -> e.equals(firstEnchant.getKey()));
 
             //int xpCost = calculateXPcost(firstEnchant.getIntValue(), firstEnchant.getKey().value().getWeight());
-            float cmult = 1;
-            if (firstEnchant.getKey().isIn(EnchantmentTags.CURSE)){ cmult = 3;}
-            this.xpCost = (int)(Math.round((cmult * (firstEnchant.getIntValue() * 0.5) * (11 - (firstEnchant.getKey().value().getWeight() * 0.6)))));
+
+            float multiplier = firstEnchantKey.isIn(EnchantmentTags.CURSE) ? 3 : firstEnchantKey.isIn(EnchantmentTags.TREASURE) ? 2 : 1;
+            this.xpCost = (int)(Math.round((multiplier * (firstEnchantLevel * 0.5) * (11 - (firstEnchantKey.value().getWeight() * 0.6)))));
 
             markDirty();
             
         } else { 
             this.outputStack = ItemStack.EMPTY;
             this.xpCost = 0;
-            //markDirty();
+            markDirty();
         }
     }
 
@@ -532,5 +544,16 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             this.pos.getY() + 0.5,
             this.pos.getZ() + 0.5
         ) <= 64.0;
+    }
+
+    public void onInventoryChange(int slot) {
+        if (world == null) { return; }
+
+        markDirty();
+        updateResult(slot);
+
+        if (!world.isClient) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
+        }
     }
 }
