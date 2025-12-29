@@ -35,7 +35,7 @@ import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+//import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -356,8 +356,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public void spawnEnchantParticle(double sx, double sy, double sz, double vx, double vy, double vz) {
-        //world.addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
-        ((ServerWorld) world).addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
+        world.addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
+        //((ServerWorld) world).addParticle(ParticleTypes.END_ROD, sx, sy, sz, vx, vy, vz);
     }
 
     @Override
