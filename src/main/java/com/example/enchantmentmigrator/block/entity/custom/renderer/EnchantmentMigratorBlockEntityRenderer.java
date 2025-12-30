@@ -37,7 +37,7 @@ public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRender
         ItemStack bookStack = entity.getStack(1);
         ItemStack razuliStack = entity.getStack(2);
 
-        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, itemRenderer, entity, 0.5, 1.5 + (entity.isTier4() ? 0.75 : 0), 0.5, 0, 0, true); }
+        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, itemRenderer, entity, 0.5, 1.5 + (entity.isTier4() && entity.isValidRecipie() ? 0.75 : 0), 0.5, 0, 0, true); }
         if (!bookStack.isEmpty()) { renderPlacedItem(bookStack, matrices, vertexConsumers, overlay, itemRenderer, entity,0.35, 0.8, 0.35, 90, zRotation1, false); }
         if (!razuliStack.isEmpty()) { renderPlacedItem(razuliStack, matrices, vertexConsumers, overlay,itemRenderer, entity, 0.65, 0.8, 0.65, 90, zRotation2, false); }
     }

@@ -289,14 +289,14 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public float getRotation() { return rotation; }
-    public double getMovement() { return Math.sin(Math.toRadians(rotation * 4)) * (this.isTier4 ? 0.15 : 0.05); }
+    public double getMovement() { return Math.sin(Math.toRadians(rotation * 4)) * (this.isTier4 && isValidRecipie() ? 0.15 : 0.05); }
     public static int getZRotation1() { return zRotation1; }
     public static int getZRotation2() { return zRotation2; }
 
     public boolean isTier4() { return this.isTier4; }
 
     public boolean isValidRecipie() {
-        return (inventory.get(INPUT_SLOT).hasEnchantments() && !inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK) && !inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST));
+        return (inventory.get(INPUT_SLOT).hasEnchantments() && inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK) && inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST));
     }
 
     @Override
