@@ -37,7 +37,7 @@ public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRender
         ItemStack bookStack = entity.getStack(1);
         ItemStack razuliStack = entity.getStack(2);
 
-        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, itemRenderer, entity, 0.5, 1.5, 0.5, 0, 0, true); }
+        if (!itemStack.isEmpty()) { renderPlacedItem(itemStack, matrices, vertexConsumers, overlay, itemRenderer, entity, 0.5, 1.5 + (entity.isTier4() ? 0.75 : 0), 0.5, 0, 0, true); }
         if (!bookStack.isEmpty()) { renderPlacedItem(bookStack, matrices, vertexConsumers, overlay, itemRenderer, entity,0.35, 0.8, 0.35, 90, zRotation1, false); }
         if (!razuliStack.isEmpty()) { renderPlacedItem(razuliStack, matrices, vertexConsumers, overlay,itemRenderer, entity, 0.65, 0.8, 0.65, 90, zRotation2, false); }
     }
@@ -46,7 +46,7 @@ public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRender
          double x, double y, double z, int yRotation, int zRotation, boolean spin) {
 
         matrices.push();
-        matrices.translate(x, y + (entity.isTier4() ? 1 : 0), z);   // position on top of block
+        matrices.translate(x, y , z);   // position on top of block
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(yRotation));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(zRotation));
         if (spin) {

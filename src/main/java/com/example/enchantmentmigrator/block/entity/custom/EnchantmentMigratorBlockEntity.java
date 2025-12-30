@@ -45,7 +45,6 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private static final int INPUT_SLOT = 0;
     private static final int BOOK_INPUT_SLOT = 1;
     private static final int RAZULI_INPUT_SLOT = 2;
-    ItemStack outputStack = ItemStack.EMPTY;
     ItemEnchantmentsComponent inputEnchants;
     ItemEnchantmentsComponent inputMinusTopEnchants;
     private int soundCooldown = 0;
@@ -176,12 +175,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             boolean t3 = false;
             boolean t4 = false;
 
-            int tier = 0;
-            for (var rule : RULES) {
-                if (name.contains(rule.getKey())) {
-                tier = rule.getValue();
-                }
-            }
+            int tier = getTier(name);
 
             switch (tier) {
                 case 1 -> t1 = true;
@@ -197,8 +191,6 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     default -> t0 = true;
                 }
             }
-
-            this.isTier4 = t4;
 
             if (t1 || t2 || t3 || t4) {
                 ptick = 60;
@@ -265,6 +257,16 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         world.addParticle(pType, sx, sy, sz, vx, vy, vz);
     }
 
+    private int getTier(String name) {
+        for (var rule : RULES) {
+            if (name.contains(rule.getKey())) {
+            return rule.getValue();
+            }
+        }
+        return 0;
+    }
+
+
     @Override
     public void setStack(int slot, ItemStack stack) {
         ItemStack oldStack = inventory.get(slot);
@@ -272,6 +274,9 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
         if (!ItemStack.areEqual(oldStack, stack)) {
             playBlockSound(world, pos, slot);
+        }
+        if (slot == INPUT_SLOT) {
+            this.isTier4 = getTier(getStack(INPUT_SLOT).toString()) == 4;
         }
     }
 
@@ -292,16 +297,20 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public double getMovement() {
-        return Math.sin(Math.toRadians(rotation * 4)) * (isTier4 ? 0.15 : 0.05);
+        return Math.sin(Math.toRadians(rotation * 4)) * (this.isTier4 ? 0.15 : 0.05);
     }
 
-    public boolean isTier4() { return isTier4;}
+    public boolean isTier4() { return this.isTier4; }
 
     public static int getZRotation1() {
         return zRotation1;
     }
     public static int getZRotation2() {
         return zRotation2;
+    }
+
+    public boolean canTakeOutput(PlayerEntity player) {
+        return (inventory.get(INPUT_SLOT).hasEnchantments() && !inventory.get(BOOK_INPUT_SLOT).isEmpty() && !inventory.get(RAZULI_INPUT_SLOT).isEmpty());
     }
 
     @Override

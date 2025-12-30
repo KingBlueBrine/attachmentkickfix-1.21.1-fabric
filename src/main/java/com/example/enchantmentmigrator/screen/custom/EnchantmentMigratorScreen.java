@@ -79,7 +79,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
       super.drawForeground(context, mouseX, mouseY);
 
 
-		context.drawText(this.textRenderer, this.title, this.titleX + 60, this.titleY, 11053224, false);
+		context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 11053224, false);
 		context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 11053224, false);
 
         int xpCost = handler.getXpCost();

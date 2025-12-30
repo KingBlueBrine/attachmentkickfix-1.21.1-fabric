@@ -43,31 +43,29 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
-                inventory.markDirty();
-                onContentChanged(inventory);
+                //onContentChanged(inventory);
+                updateResult();
             }
         });
         
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(Items.BOOK); }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
-                inventory.markDirty();
                 onContentChanged(inventory);
-            }
+            }*/
         });
 
         this.addSlot(new Slot(inventory, 2, 76, 22){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(RazuliDustItem.RAZULI_DUST); }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
-                inventory.markDirty();
                 onContentChanged(inventory);
-            }
+            }*/
         });
 
         this.addSlot(new Slot(output, 0, 134, 47){
@@ -83,16 +81,16 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             
             @Override
             public boolean canTakeItems(PlayerEntity player) {
-				return (hasEnoughLevels(player) && inventory.getStack(0).hasEnchantments() && 
-					inventory.getStack(1).isOf(Items.BOOK) && inventory.getStack(2).isOf(RazuliDustItem.RAZULI_DUST));
+				//return (hasEnoughLevels(player) && inventory.getStack(0).hasEnchantments() && 
+				//	inventory.getStack(1).isOf(Items.BOOK) && inventory.getStack(2).isOf(RazuliDustItem.RAZULI_DUST));
+                return (((EnchantmentMigratorBlockEntity) blockEntity).canTakeOutput(player) && hasEnoughLevels(player));
             }
 
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
-                inventory.markDirty();
                 onContentChanged(inventory);
-            }
+            }*/
         });
 
         addPlayerInventory(playerInventory);
