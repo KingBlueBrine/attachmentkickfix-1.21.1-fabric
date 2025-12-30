@@ -1,6 +1,6 @@
 package com.example.enchantmentmigrator.screen.custom;
 
-import com.example.enchantmentmigrator.EnchantmentMigratorMod;
+//import com.example.enchantmentmigrator.EnchantmentMigratorMod;
 import com.example.enchantmentmigrator.block.entity.custom.EnchantmentMigratorBlockEntity;
 import com.example.enchantmentmigrator.item.RazuliDustItem;
 import com.example.enchantmentmigrator.screen.ModScreenHandlers;
@@ -43,7 +43,6 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             @Override
             public void markDirty() {
                 super.markDirty();
-                //onContentChanged(inventory);
                 updateResult();
             }
         });
@@ -51,21 +50,11 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(Items.BOOK); }
-            /*@Override
-            public void markDirty() {
-                super.markDirty();
-                onContentChanged(inventory);
-            }*/
         });
 
         this.addSlot(new Slot(inventory, 2, 76, 22){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(RazuliDustItem.RAZULI_DUST); }
-            /*@Override
-            public void markDirty() {
-                super.markDirty();
-                onContentChanged(inventory);
-            }*/
         });
 
         this.addSlot(new Slot(output, 0, 134, 47){
@@ -81,9 +70,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             
             @Override
             public boolean canTakeItems(PlayerEntity player) {
-				//return (hasEnoughLevels(player) && inventory.getStack(0).hasEnchantments() && 
-				//	inventory.getStack(1).isOf(Items.BOOK) && inventory.getStack(2).isOf(RazuliDustItem.RAZULI_DUST));
-                return (((EnchantmentMigratorBlockEntity) blockEntity).canTakeOutput(player) && hasEnoughLevels(player));
+                return (((EnchantmentMigratorBlockEntity) blockEntity).isValidRecipie() && hasEnoughLevels(player));
             }
 
             /*@Override
@@ -102,26 +89,28 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         EnchantmentHelper.set(inventory.getStack(0), inputMinusTopEnchants);
         inventory.getStack(1).decrement(1);
         inventory.getStack(2).decrement(1);
-        inventory.markDirty();
 
-         if (!player.isInCreativeMode()) {
+        if (!player.isInCreativeMode()) {
             player.addExperienceLevels(-getXpCost());
         }
+
+        inventory.markDirty();
+        updateResult();
     }
 
-    @Override
+    /*@Override
     public void onContentChanged(Inventory inventory) {
         super.onContentChanged(inventory);
 		EnchantmentMigratorMod.LOGGER.info("Contents change detects");
 
         updateResult();
 		
-    }
+    }*/
 
     private void updateResult() {
         ItemStack inputStack = inventory.getStack(0);
 
-        if (!inputStack.isEmpty() && inputStack.hasEnchantments() && inventory.getStack(1).isOf(Items.BOOK) && inventory.getStack(2).isOf(RazuliDustItem.RAZULI_DUST)) {
+        if (blockEntity.isValidRecipie()) {
 
             ItemEnchantmentsComponent inputEnchants = EnchantmentHelper.getEnchantments(inputStack);
 
@@ -144,7 +133,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             float multiplier = firstEnchantKey.isIn(EnchantmentTags.CURSE) ? 3 : firstEnchantKey.isIn(EnchantmentTags.TREASURE) ? 2 : 1;
             this.xpCost = (int)(Math.round((multiplier * (firstEnchantLevel * 0.5) * (11 - (firstEnchantKey.value().getWeight() * 0.6)))));
 
-			EnchantmentMigratorMod.LOGGER.info("Updating block output result");
+			//EnchantmentMigratorMod.LOGGER.info("Updating block output result");
         } else {
 			output.clear();
 			this.xpCost = 0;
@@ -204,11 +193,11 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
 	public int getXpCost() { return this.xpCost;}
 
 
-	@Override
+	/*@Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
         output.clear();
-    }
+    }*/
 
     @Override
     public boolean canUse(PlayerEntity player) { return this.inventory.canPlayerUse(player); }

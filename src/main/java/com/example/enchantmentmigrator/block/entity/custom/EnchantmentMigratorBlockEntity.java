@@ -159,10 +159,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
 
         Vec3d center = Vec3d.ofCenter(pos);
         Vec3d target = center.add(0, 1, 0);
-        boolean hasBook = inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK);
-        boolean hasRazuli = inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST);
 
-        if (inputStack.hasEnchantments() && hasBook && hasRazuli) {
+        if (isValidRecipie()) {
 
             ItemStack copy = inputStack.copy();
             EnchantmentHelper.set(copy, null);
@@ -251,7 +249,6 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         }
     }
 
-
     public void spawnEnchantParticle(double sx, double sy, double sz, double vx, double vy, double vz, boolean alternateParticle) {
         ParticleEffect pType = alternateParticle ? ParticleTypes.ENCHANT : ParticleTypes.END_ROD;
         world.addParticle(pType, sx, sy, sz, vx, vy, vz);
@@ -265,7 +262,6 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         }
         return 0;
     }
-
 
     @Override
     public void setStack(int slot, ItemStack stack) {
@@ -292,25 +288,15 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         }
     }
 
-    public float getRotation() {
-        return rotation;
-    }
-
-    public double getMovement() {
-        return Math.sin(Math.toRadians(rotation * 4)) * (this.isTier4 ? 0.15 : 0.05);
-    }
+    public float getRotation() { return rotation; }
+    public double getMovement() { return Math.sin(Math.toRadians(rotation * 4)) * (this.isTier4 ? 0.15 : 0.05); }
+    public static int getZRotation1() { return zRotation1; }
+    public static int getZRotation2() { return zRotation2; }
 
     public boolean isTier4() { return this.isTier4; }
 
-    public static int getZRotation1() {
-        return zRotation1;
-    }
-    public static int getZRotation2() {
-        return zRotation2;
-    }
-
-    public boolean canTakeOutput(PlayerEntity player) {
-        return (inventory.get(INPUT_SLOT).hasEnchantments() && !inventory.get(BOOK_INPUT_SLOT).isEmpty() && !inventory.get(RAZULI_INPUT_SLOT).isEmpty());
+    public boolean isValidRecipie() {
+        return (inventory.get(INPUT_SLOT).hasEnchantments() && !inventory.get(BOOK_INPUT_SLOT).isOf(Items.BOOK) && !inventory.get(RAZULI_INPUT_SLOT).isOf(RazuliDustItem.RAZULI_DUST));
     }
 
     @Override
