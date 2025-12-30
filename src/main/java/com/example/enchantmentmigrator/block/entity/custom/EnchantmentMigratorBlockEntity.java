@@ -53,6 +53,7 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     private static int zRotation1 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private static int zRotation2 = (int)(Math.round(ThreadLocalRandom.current().nextGaussian()*120)); //(int)(Math.round(Math.random()*360));
     private int ptick;
+    private boolean isTier4 = false;
 
     private static final Map<Item, SoundData> ITEM_SOUNDS = Map.ofEntries(
         Map.entry(Items.IRON_BOOTS,      new SoundData(ModSounds.BLUETEETH, 5f)),
@@ -68,8 +69,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     );
 
     private static final List<Map.Entry<String, Integer>> RULES = List.of(
-        Map.entry("iceandfire:copper_metal", 0),
-        Map.entry("iceandfire:silver_metal", 0),
+        Map.entry("iceandfire:armor_copper_metal", 0),
+        Map.entry("iceandfire:armor_silver_metal", 0),
         Map.entry("betternether:cincinnasite", 1),
         Map.entry("deeperdarker:resonarium", 1),
         Map.entry("aether:gravitite", 1),
@@ -197,6 +198,8 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                 }
             }
 
+            this.isTier4 = t4;
+
             if (t1 || t2 || t3 || t4) {
                 ptick = 60;
 
@@ -289,9 +292,10 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
     }
 
     public double getMovement() {
-        double movement = Math.sin(Math.toRadians(rotation * 4)) * 0.05;
-        return movement;
+        return Math.sin(Math.toRadians(rotation * 4)) * (isTier4 ? 0.15 : 0.05);
     }
+
+    public boolean isTier4() { return isTier4;}
 
     public static int getZRotation1() {
         return zRotation1;

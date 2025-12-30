@@ -46,7 +46,7 @@ public class EnchantmentMigratorBlockEntityRenderer implements BlockEntityRender
          double x, double y, double z, int yRotation, int zRotation, boolean spin) {
 
         matrices.push();
-        matrices.translate(x, y, z);   // position on top of block
+        matrices.translate(x, y + (entity.isTier4() ? 1 : 0), z);   // position on top of block
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(yRotation));
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(zRotation));
         if (spin) {

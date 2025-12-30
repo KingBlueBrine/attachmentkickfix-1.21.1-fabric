@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "enchantmentmigrator",
-	"version": "1.15.6",
+	"version": "1.15.7",
 	"name": "Enchantment Migrator",
 	"description": "A mod that moves the first enchantment of an item onto a book. \n \n NOT FOR PUBLIC DISTRIBUTION",
 	"authors": [

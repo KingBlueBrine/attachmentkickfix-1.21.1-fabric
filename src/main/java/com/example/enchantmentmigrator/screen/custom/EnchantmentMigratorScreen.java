@@ -36,7 +36,7 @@ public class EnchantmentMigratorScreen extends HandledScreen<EnchantmentMigrator
 
     public EnchantmentMigratorScreen(EnchantmentMigratorScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        //this.titleX = 60;
+        this.titleX = 60;
         this.player = inventory.player;
     }
 

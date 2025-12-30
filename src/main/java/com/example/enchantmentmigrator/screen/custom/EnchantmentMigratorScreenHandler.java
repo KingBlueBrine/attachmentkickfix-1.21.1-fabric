@@ -44,6 +44,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 inventory.markDirty();
+                onContentChanged(inventory);
             }
         });
         
@@ -54,6 +55,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 inventory.markDirty();
+                onContentChanged(inventory);
             }
         });
 
@@ -64,6 +66,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 inventory.markDirty();
+                onContentChanged(inventory);
             }
         });
 
@@ -88,6 +91,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public void markDirty() {
                 super.markDirty();
                 inventory.markDirty();
+                onContentChanged(inventory);
             }
         });
 
