@@ -26,6 +26,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
     public final EnchantmentMigratorBlockEntity blockEntity;
     private ItemEnchantmentsComponent inputMinusTopEnchants;
     private int xpCost;
+    //private final PlayerInventory playerInventory;
 
     public EnchantmentMigratorScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos));
@@ -36,25 +37,36 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         super(ModScreenHandlers.ENCHANTMENT_MIGRATOR_SH, syncId);
         this.inventory = ((Inventory) blockEntity);
         this.blockEntity = ((EnchantmentMigratorBlockEntity) blockEntity);
+        //this.playerInventory = playerInventory;
 
         this.addSlot(new Slot(inventory, 0, 27, 47) {
             @Override
             public boolean canInsert(ItemStack item) { return (item.hasEnchantments()); }
-            /*@Override
+            @Override
             public void markDirty() {
                 super.markDirty();
                 updateResult();
-            } */
+            }
         });
         
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(Items.BOOK); }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                updateResult();
+            }
         });
 
         this.addSlot(new Slot(inventory, 2, 76, 22){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(RazuliDustItem.RAZULI_DUST); }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                updateResult();
+            }
         });
 
         this.addSlot(new Slot(output, 0, 134, 47){
@@ -74,15 +86,20 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             }
         });
 
+        updateResult();
+
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
     }
 
-    @Override
+    /*@Override
     public void sendContentUpdates() {
         super.sendContentUpdates();
-        updateResult();
-    }
+
+        if (!playerInventory.player.getWorld().isClient) {
+            updateResult();
+        }
+    }*/
 
     protected void onTakeOutput(PlayerEntity player) {
         
@@ -94,7 +111,6 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             player.addExperienceLevels(-getXpCost());
         }
 
-        inventory.markDirty();
         updateResult();
     }
 
@@ -138,6 +154,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
 			output.clear();
 			this.xpCost = 0;
 		}
+        //inventory.markDirty();
     }
 
     @Override
