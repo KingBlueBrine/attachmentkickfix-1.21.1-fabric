@@ -40,11 +40,11 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 0, 27, 47) {
             @Override
             public boolean canInsert(ItemStack item) { return (item.hasEnchantments()); }
-            @Override
+            /*@Override
             public void markDirty() {
                 super.markDirty();
                 updateResult();
-            }
+            } */
         });
         
         this.addSlot(new Slot(inventory, 1, 76, 47){
@@ -72,16 +72,16 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public boolean canTakeItems(PlayerEntity player) {
                 return (((EnchantmentMigratorBlockEntity) blockEntity).isValidRecipie() && hasEnoughLevels(player));
             }
-
-            /*@Override
-            public void markDirty() {
-                super.markDirty();
-                onContentChanged(inventory);
-            }*/
         });
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
+    }
+
+    @Override
+    public void sendContentUpdates() {
+        super.sendContentUpdates();
+        updateResult();
     }
 
     protected void onTakeOutput(PlayerEntity player) {
