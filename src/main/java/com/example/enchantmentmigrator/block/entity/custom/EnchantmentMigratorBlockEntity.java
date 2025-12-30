@@ -1,5 +1,6 @@
 package com.example.enchantmentmigrator.block.entity.custom;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import org.jetbrains.annotations.Nullable;
@@ -64,6 +65,29 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
         Map.entry(Items.STONE_SWORD,     new SoundData(ModSounds.MY_GUINEA_PIG, 11f)),
         Map.entry(Items.FISHING_ROD,     new SoundData(ModSounds.WEIGHT_LOSS, 3f)),
         Map.entry(Items.DIAMOND_HOE,     new SoundData(ModSounds.UNI, 13f))
+    );
+
+    private static final List<Map.Entry<String, Integer>> RULES = List.of(
+        Map.entry("iceandfire:copper_metal", 0),
+        Map.entry("iceandfire:silver_metal", 0),
+        Map.entry("betternether:cincinnasite", 1),
+        Map.entry("deeperdarker:resonarium", 1),
+        Map.entry("aether:gravitite", 1),
+        Map.entry("aether:neptune", 2),
+        Map.entry("iceandfire:deathworm", 1),
+        Map.entry("diamond", 1),
+        Map.entry("netherite", 2),
+        Map.entry("ruby", 2),
+        Map.entry("betterend:aeternium", 2),
+        Map.entry("iceandfire:dragonbone", 2),
+        Map.entry("iceandfire:tide", 2),
+        Map.entry("aether:valkyrie", 2),
+        Map.entry("aether:pheonix", 2),
+        Map.entry("aether:obsidian", 2),
+        Map.entry("iceandfire:armor", 3),
+        Map.entry("betterend:crystalite", 3),
+        Map.entry("deeperdarker:warden", 3),
+        Map.entry("iceandfire:dragonsteel", 4)
     );
 
     public EnchantmentMigratorBlockEntity(BlockPos pos, BlockState state) {
@@ -145,34 +169,57 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
             Rarity rarity = copy.getRarity();
             String name = inputStack.toString();
 
-            boolean isDragon = name.contains("dragon");
-            boolean isDiamond = name.contains("diamond");
+            boolean t0 = false;
+            boolean t1 = false;
+            boolean t2 = false;
+            boolean t3 = false;
+            boolean t4 = false;
 
-            if (isDragon || isDiamond || name.contains("netherite") || name.contains("ruby") ||
-                          rarity == Rarity.EPIC || rarity == Rarity.RARE || rarity == Rarity.UNCOMMON) {
+            int tier = 0;
+            for (var rule : RULES) {
+                if (name.contains(rule.getKey())) {
+                tier = rule.getValue();
+                }
+            }
+
+            switch (tier) {
+                case 1 -> t1 = true;
+                case 2 -> t2 = true;
+                case 3 -> t3 = true;
+                case 4 -> t4 = true;
+                default -> t0 = true;
+            }
+            if (t0) {
+                switch (rarity) {
+                    case UNCOMMON -> t1 = true;
+                    case RARE, EPIC -> t2 = true;
+                    default -> t0 = true;
+                }
+            }
+
+            if (t1 || t2 || t3 || t4) {
                 ptick = 60;
 
                 double pRotation = Math.toRadians(rotation);
-                int particleCount = isDragon ? 48 : isDiamond ? 8 : 16;
-                double radius = isDragon ? 0.8 : isDiamond ? 1.2 : 1.0;
-                double tangentialSpeed = 0.03;
-                Vec3d end = center.add(0, isDragon ? 0 : 1, 0);
+                int particleCount = t4 ? 32 : t3 ? 24: t2 ? 16 : 8;
+                double radius = t4 || t2 ? 1 : t3 ? 0.8 : 1.2;
+                Vec3d end = center.add(0, t4 || t3 ? 0 : 1, 0);
 
                 for (int i = 0; i < particleCount; i++) {
-                    double t = isDragon ? (double) i / particleCount : 0;
-                    double theta = isDragon ? (t * Math.PI * 2) + (pRotation * 15) : ((2 * Math.PI / particleCount) * i) + pRotation * 2.5;
+                    double t = t4 || t3 ? (double) i / particleCount : 0;
+                    double theta = t4 || t3 ? (t * Math.PI * 2) + (pRotation * 15) : ((2 * Math.PI / particleCount) * i) + pRotation * 2.5;
 
                     double cx = end.x + Math.cos(theta) * radius;
                     double cz = end.z + Math.sin(theta) * radius;
-                    double cy = isDragon ? end.y + t * 1.5 : end.y + Math.sin(theta) * 0.05;
+                    double cy = t4 ? end.y + t * 2 :  t3 ? end.y + t * 1.5 : end.y + Math.sin(theta) * 0.05;
 
-                    double vx = isDiamond ? 0 : Math.sin(theta) * tangentialSpeed;
-                    double vz = isDiamond ? 0 : -Math.cos(theta) * tangentialSpeed;
-                    double vy = isDragon ? 0.07 : 0;
+                    double vx = t1 ? 0 : Math.sin(theta) * 0.03;
+                    double vz = t1 ? 0 : -Math.cos(theta) * 0.03;
+                    double vy = t4 ? 0.12 : t3 ? 0.07 : 0;
 
                     spawnEnchantParticle(cx, cy, cz, vx, vy, vz, false);
 
-                    if (isDragon) {
+                    if (t4 || t3) {
                         double cx1 = end.x + Math.cos(theta + Math.PI) * radius;
                         double cz1 = end.z + Math.sin(theta + Math.PI) * radius;
 
@@ -180,31 +227,33 @@ public class EnchantmentMigratorBlockEntity extends BlockEntity implements Imple
                     }
                 }
                 return;
+            } else if (t0) {
+
+                ptick = world.random.nextBetween(20, 50);
+                double spread = 0.1;
+                double vx = (world.random.nextDouble() - 0.5) * spread;
+                double vz = (world.random.nextDouble() - 0.5) * spread;
+                double vy = 0.05 + world.random.nextDouble() * 0.02;
+                spawnEnchantParticle(target.x, target.y, target.z, vx, vy, vz, false);
+                return;
             }
+        } else if (inputStack.hasEnchantments()) {
 
             ptick = world.random.nextBetween(20, 50);
-            double spread = 0.1;
-            double vx = (world.random.nextDouble() - 0.5) * spread;
-            double vz = (world.random.nextDouble() - 0.5) * spread;
-            double vy = 0.05 + world.random.nextDouble() * 0.02;
-            spawnEnchantParticle(target.x, target.y, target.z, vx, vy, vz, false);
+            float angle = world.random.nextFloat() * (float) (Math.PI * 2);
+            float radius = 1.75f + world.random.nextFloat() * 0.5f;
+            float yOffset = 1f + (world.random.nextFloat() - 0.5f);
+
+            Vec3d start = Vec3d.of(pos).add(
+                Math.cos(angle) * radius,
+                yOffset,
+                Math.sin(angle) * radius
+            );
+
+            Vec3d velocity = target.subtract(start).multiply(0.09);
+            spawnEnchantParticle(start.x, start.y, start.z, velocity.x, velocity.y, velocity.z, false);
             return;
         }
-
-        ptick = world.random.nextBetween(20, 60);
-        float angle = world.random.nextFloat() * (float) (Math.PI * 2);
-        float radius = 1.75f + world.random.nextFloat() * 0.5f;
-        float yOffset = 1f + (world.random.nextFloat() - 0.5f);
-
-        Vec3d start = Vec3d.of(pos).add(
-            Math.cos(angle) * radius,
-            yOffset,
-            Math.sin(angle) * radius
-        );
-
-        Vec3d velocity = target.subtract(start).multiply(0.09);
-        spawnEnchantParticle(start.x, start.y, start.z, velocity.x, velocity.y, velocity.z, false);
-        return;
     }
 
 

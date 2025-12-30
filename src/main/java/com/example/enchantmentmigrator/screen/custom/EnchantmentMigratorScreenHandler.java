@@ -40,16 +40,31 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 0, 27, 47) {
             @Override
             public boolean canInsert(ItemStack item) { return (item.hasEnchantments()); }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                inventory.markDirty();
+            }
         });
         
         this.addSlot(new Slot(inventory, 1, 76, 47){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(Items.BOOK); }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                inventory.markDirty();
+            }
         });
 
         this.addSlot(new Slot(inventory, 2, 76, 22){
             @Override
             public boolean canInsert(ItemStack item) { return item.isOf(RazuliDustItem.RAZULI_DUST); }
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                inventory.markDirty();
+            }
         });
 
         this.addSlot(new Slot(output, 0, 134, 47){
@@ -67,6 +82,12 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
             public boolean canTakeItems(PlayerEntity player) {
 				return (hasEnoughLevels(player) && inventory.getStack(0).hasEnchantments() && 
 					inventory.getStack(1).isOf(Items.BOOK) && inventory.getStack(2).isOf(RazuliDustItem.RAZULI_DUST));
+            }
+
+            @Override
+            public void markDirty() {
+                super.markDirty();
+                inventory.markDirty();
             }
         });
 
