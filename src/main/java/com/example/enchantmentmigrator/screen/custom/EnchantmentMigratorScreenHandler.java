@@ -170,7 +170,7 @@ public class EnchantmentMigratorScreenHandler extends ScreenHandler {
                 if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onTakeItem(player, originalStack);
+                slot.onTakeItem(player, newStack);
             } else {
                 boolean moved = false;
 
