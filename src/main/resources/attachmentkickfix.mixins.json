@@ -3,9 +3,7 @@
     "package": "com.example.attachmentkickfix.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "AttachmentChangeMixin",
-        "StriderAndDestroyerArmourMixin",
-        "StriderDamageMultiplierMixin"
+        "AttachmentChangeMixin"
     ],
     "injectors": {
         "defaultRequire": 1

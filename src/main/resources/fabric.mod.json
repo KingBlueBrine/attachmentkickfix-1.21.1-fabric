@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "attachmentkickfix",
-	"version": "2.4",
+	"version": "2.5",
 	"name": "Attachment Kick Fix",
 	"description": "Prevents the player getting kicked by missing attachment data",
 	"authors": [
