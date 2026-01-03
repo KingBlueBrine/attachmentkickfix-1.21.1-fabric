@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 	"id": "attachmentkickfix",
-	"version": "2.5",
+	"version": "2.6",
 	"name": "Attachment Kick Fix",
-	"description": "Prevents the player getting kicked by missing attachment data",
+	"description": "Prevents the player getting kicked by the server sending the client an attachment data packet for an entity which the client hasn't registered yet.",
 	"authors": [
 		"kibiborbine"
 	],
