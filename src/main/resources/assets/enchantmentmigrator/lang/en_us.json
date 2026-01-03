@@ -1,8 +1,0 @@
-{
-    "item.enchantmentmigrator.razuli_dust": "Razuli Dust",
-
-    "block.enchantmentmigrator.enchantment_migrator": "Enchantment Migrator",
-
-    "container.enchantment_migrate": "Migrate Enchantments",
-    "container.enchantment_migrate.cost": "Migration Cost: %1$s"
-}

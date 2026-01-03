@@ -1,29 +1,27 @@
 {
 	"schemaVersion": 1,
-	"id": "enchantmentmigrator",
-	"version": "1.15.8.5",
-	"name": "Enchantment Migrator",
-	"description": "A mod that moves the first enchantment of an item onto a book. \n \n NOT FOR PUBLIC DISTRIBUTION",
+	"id": "attachmentkickfix",
+	"version": "1.2",
+	"name": "Attachment Kick Fix",
+	"description": "Prevents the player getting kicked by missing attachment data",
 	"authors": [
 		"kibiborbine"
 	],
-	"icon": "assets/enchantmentmigrator/icon.png",
+	"icon": "assets/attachmentkickfix/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.enchantmentmigrator.EnchantmentMigratorMod"
-		],
-		"client": [
-			"com.example.enchantmentmigrator.EnchantmentMigratorClient"
-		],
-		"fabric-datagen": [
-    		"com.example.enchantmentmigrator.EnchantmentMigratorDataGenerator"
-  		]
+			"com.example.attachmentkickfix.AttachmentKickFix"
+		]
 	},
+	"mixins": [
+		"attachmentkickfix.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.16.6",
 		"minecraft": "~1.21.1",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"armory-rpgs": "*"
 	},
 	"suggests": {
 	}

@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "package": "com.example.attachmentkickfix.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "ClientPlayNetworkAddonMixin",
+        "StriderAndDestroyerArmourMixin",
+        "StriderDamageMultiplierMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": false
+    }
+}
