@@ -3,7 +3,7 @@
     "package": "com.example.attachmentkickfix.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "ClientPlayNetworkAddonMixin",
+        "AttachmentChangeMixin",
         "StriderAndDestroyerArmourMixin",
         "StriderDamageMultiplierMixin"
     ],
