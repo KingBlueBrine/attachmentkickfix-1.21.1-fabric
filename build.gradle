@@ -34,7 +34,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	//modImplementation "curse.maven:armory-rpg-series-1311561:7199884"
-	modImplementation name: "bedrockoid-0.1.2"
+	
 }
 
 
