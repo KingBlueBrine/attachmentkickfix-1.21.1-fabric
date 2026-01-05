@@ -5,9 +5,7 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import com.example.attachmentkickfix.AttachmentKickFix;
-
 import net.minecraft.world.World;
 
 @Pseudo
@@ -18,7 +16,6 @@ public abstract class AttachmentChangeMixin {
         method = "tryApply",
         at = @At(
             value = "INVOKE",
-            //target = "Lnet/fabricmc/fabric/impl/attachment/sync/AttachmentTargetInfo;getTarget(Lnet/minecraft/world/World;)Lnet/fabricmc/fabric/api/attachment/v1/AttachmentTarget;"
             target = "Lnet/minecraft/text/Text;empty()Lnet/minecraft/text/MutableText;"
         ),
         cancellable = true
